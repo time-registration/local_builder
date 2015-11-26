@@ -1,0 +1,138 @@
+#!/bin/env php
+<?php
+/**
+ * @author net_bazzline_create_executable_command_line_file
+ * @since 2015-11-26
+ */
+
+//begin of including composer autoload.php
+$possiblePathsToComposerAutoloadFile = array(
+    __DIR__ . '/../../../autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+    __DIR__ . '/../vendor/autoload.php'
+);
+$pathToAutoloadFileNotFound = true;
+$pathToAutoloadFile         = null;
+foreach ($possiblePathsToComposerAutoloadFile as $path) {
+    if (file_exists($path)) {
+        $pathToAutoloadFile         = $path;
+        $pathToAutoloadFileNotFound = false;
+        break;
+    }
+}
+if ($pathToAutoloadFileNotFound) {
+    echo 'could not find composer autoload.php, no composer installed?' . PHP_EOL;
+    exit(1);
+}
+
+require_once $pathToAutoloadFile;
+//end of including composer autoload.php
+
+use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+
+$environment    = new CommandLineEnvironment($argv);
+$usage          = basename(__FILE__) . ' <subject> <description> [-v|--verbose]';
+
+$environment->execute(
+    function (CommandLineEnvironment $environment) {
+        //begin of dependencies
+        $arguments      = $environment->getArguments();
+        $configuration  = require_once __DIR__ . '/../configuration/configuration.php';
+        $values         = $arguments->getValues();
+        //end of dependencies
+
+        $valuesNotAreValid = (!count($values) == 2);
+
+        //begin of argument validation
+        if ($valuesNotAreValid) {
+            throw new InvalidArgumentException(
+                'invalid number of arguments provided'
+            );
+        }
+
+        $description        = $values[1];
+        $subject            = $values[0];
+        $subjectIsToLong    = (strlen($subject) > $configuration['fixed_character_number_of_subject_section']);
+
+        if ($subjectIsToLong) {
+            throw new InvalidArgumentException(
+                'provided subject is to long, maximum character length is ' .
+                    $configuration['fixed_character_number_of_subject_section']
+            );
+        }
+        //end of argument validation
+
+        //put in your business logic
+        //@todo implement validation
+        //
+        $currentCalendarWeek    = date('W');
+        $currentDate            = $configuration['prefix_for_current_day'] . date('ymd');
+        $currentHour            = date('H');
+        $currentMinute          = date('M');
+        $path                   = $configuration['path_to_store_the_data'];
+        $filePath               = $path . '/' . $currentCalendarWeek . '.md';
+
+        if ($currentMinute <= 15) {
+            $timeAsString = $currentHour . ':' . 15;
+        } else if ($currentMinute <= 30) {
+            $timeAsString = $currentHour . ':' . 30;
+        } else if ($currentMinute <= 45) {
+            $timeAsString = $currentHour . ':' . 45;
+        } else {
+            if ($currentHour < 9) {
+                $timeAsString = '0' . ($currentHour + 1) . ':00';
+            } else if ($currentHour < 23) {
+                $timeAsString = ($currentHour + 1) . ':00';
+            } else {
+                $timeAsString = '00:00';
+            }
+        }
+        $timeAsString .= str_repeat(' ', 3);    //make the string eight characters long
+        $subjectAsString = $subject . str_repeat(
+            ' ',
+            ($configuration['fixed_character_number_of_subject_section'] - strlen($subject))
+        );
+        //@todo
+        //--if entry with $timeAsString for $currentDate exists, throw exception
+        //--move whole file generation into separate class
+        //--move configuration instantiation into a class
+        //--move whole line generation into separate class
+
+        $content = $timeAsString . $subjectAsString . $description . PHP_EOL;
+
+        //begin of add current date as header to the file
+        $isTheFirstEntryFromTheCurrentDay = true;
+
+        if (file_exists($filePath)) {
+            $string = file_get_contents($filePath);
+            $lines  = explode(PHP_EOL, $string);
+
+            foreach ($lines as $line) {
+                if ($line == $currentDate) {
+                    $isTheFirstEntryFromTheCurrentDay = false;
+                    break;
+                }
+            }
+        }
+
+        if ($isTheFirstEntryFromTheCurrentDay) {
+            $content = $currentDate . PHP_EOL . PHP_EOL . $content;
+        }
+        //end of add current date as header to the file
+
+        $couldNotWriteContent = (file_put_contents($filePath, $content, FILE_APPEND) === false);
+
+        if ($couldNotWriteContent) {
+            $environment->output('could not write to file:');
+            $environment->output(basename($filePath));
+            $environment->output('in path:');
+            $environment->output($path);
+        } else {
+            $environment->outputIfVerbosityIsEnabled('added content:');
+            $environment->outputIfVerbosityIsEnabled($content);
+            $environment->outputIfVerbosityIsEnabled('to file:');
+            $environment->outputIfVerbosityIsEnabled(basename($filePath));
+        }
+    },
+    $usage
+);

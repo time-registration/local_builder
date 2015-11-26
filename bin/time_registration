@@ -1,0 +1,86 @@
+#!/bin/env php
+<?php
+/**
+ * @author net_bazzline_create_executable_command_line_file
+ * @since 2015-11-26
+ */
+
+//begin of including composer autoload.php
+$possiblePathsToComposerAutoloadFile = array(
+    __DIR__ . '/../../../autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+    __DIR__ . '/../vendor/autoload.php'
+);
+$pathToAutoloadFileNotFound = true;
+$pathToAutoloadFile         = null;
+foreach ($possiblePathsToComposerAutoloadFile as $path) {
+    if (file_exists($path)) {
+        $pathToAutoloadFile         = $path;
+        $pathToAutoloadFileNotFound = false;
+        break;
+    }
+}
+if ($pathToAutoloadFileNotFound) {
+    echo 'could not find composer autoload.php, no composer installed?' . PHP_EOL;
+    exit(1);
+}
+
+require_once $pathToAutoloadFile;
+//end of including composer autoload.php
+
+use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+
+$availableCommands      = array();
+$blacklistedFileNames   = array(
+    '.'                 => true,
+    '..'                => true,
+    'time_registration' => true
+);
+$lengthOfThisFileName   = 18;   //lenght of 'time_registration' is 17 plus 1 for '_'
+
+if ($directoryHandle = opendir(__DIR__)) {
+    while (false !== ($fileName = readdir($directoryHandle))) {
+        if (!isset($blacklistedFileNames[$fileName])) {
+            $availableCommands[] = substr($fileName, $lengthOfThisFileName);
+        }
+    }
+}
+natsort($availableCommands);
+
+$environment    = new CommandLineEnvironment($argv);
+$usage			= basename(__FILE__) . ' <command> [<list of arguments>]' . PHP_EOL .
+    'available commands:' . PHP_EOL .
+    implode(PHP_EOL . '    ', $availableCommands);
+
+$environment->execute(
+    function (CommandLineEnvironment $environment) {
+        //begin of dependencies
+        $arguments  = $environment->getArguments();
+exit(var_export($arguments, true));
+        $values     = $arguments->getValues();
+        //end of dependencies
+
+        //begin of argument validation
+        $valuesNotAreValid = (count($values) == 0);
+
+        if ($valuesNotAreValid) {
+            throw new InvalidArgumentException(
+                'invalid number of arguments provided'
+            );
+        }
+        //end of argument validation
+
+        $command            = array_shift($values);
+        $values             = array_map(
+            function ($value) {
+                return '"' . $value . '"';
+            },
+            $values
+        );
+        $commandToExecute   = __DIR__ . '/time_registration_' .
+            $command .
+            ' ' . implode(' ', $values);
+        passthru($commandToExecute);
+    },
+    $usage
+);

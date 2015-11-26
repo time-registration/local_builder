@@ -1,0 +1,5 @@
+{
+    "require": {
+        "net_bazzline/php_component_cli_environment": "0.1.0"
+    }
+}
