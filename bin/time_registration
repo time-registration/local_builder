@@ -56,7 +56,6 @@ $environment->execute(
     function (CommandLineEnvironment $environment) {
         //begin of dependencies
         $arguments  = $environment->getArguments();
-exit(var_export($arguments, true));
         $values     = $arguments->getValues();
         //end of dependencies
 
@@ -70,16 +69,17 @@ exit(var_export($arguments, true));
         }
         //end of argument validation
 
-        $command            = array_shift($values);
-        $values             = array_map(
+        $arguments          = $arguments->getArguments();
+        $command            = array_shift($arguments);
+        $arguments          = array_map(
             function ($value) {
                 return '"' . $value . '"';
             },
-            $values
+            $arguments
         );
         $commandToExecute   = __DIR__ . '/time_registration_' .
             $command .
-            ' ' . implode(' ', $values);
+            ' ' . implode(' ', $arguments);
         passthru($commandToExecute);
     },
     $usage
