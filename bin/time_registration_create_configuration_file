@@ -35,7 +35,67 @@ $usage			= basename(__FILE__) . ' [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
-        //put in your business logic
+        //@todo
+        //--add optional parameter to provide the user home
+        //--add optional flag to --force (overwrite) --update (try to update)
+        $pathToCurrentUserHome  = trim(shell_exec('echo $HOME'));
+        $pathToConfiguration    = '.time-registration/configuration';
+        $configurationFileName  = 'local_builder.php';
+        $fullQualifiedPath      = $pathToCurrentUserHome . '/' . $pathToConfiguration;
+        $fullQualifiedFilePath  = $fullQualifiedPath . '/' . $configurationFileName;
+
+        $configurationFileDoesExist = file_exists($fullQualifiedFilePath);
+
+        if ($configurationFileDoesExist) {
+            throw new RuntimeException(
+                'configuration file already exists'
+            );
+        } else {
+            $environment->outputIfVerbosityIsEnabled('creating configuration file');
+            $configurationPathDoesNotExist = (!is_dir($fullQualifiedPath));
+
+            if ($configurationPathDoesNotExist) {
+                $couldNotCreateConfigurationPath = (!mkdir($fullQualifiedPath, 0700, true));
+
+                if ($couldNotCreateConfigurationPath) {
+                    throw new RuntimeException(
+                        'could not create path "' . $fullQualifiedPath . '"'
+                    );
+                } else {
+                    $environment->outputIfVerbosityIsEnabled('created path');
+                }
+
+                $content = '
+<?php
+/**
+ * @author ' . basename(__FILE__) . '
+ * @since ' . date('Y-m-d') . '
+ */
+
+return array(
+    \'fixed_character_number_of_subject_section\'   => 8,
+    \'path_to_store_the_data\'                      => __DIR__ . \'/../data\',
+    \'prefix_for_current_day\'                      => \'_\',
+    \'version\'                                     => 0
+);
+';
+
+                $couldNotCreateConfigurationFile = (!file_put_contents(
+                    $fullQualifiedFilePath,
+                    $content
+                ));
+
+                if ($couldNotCreateConfigurationFile) {
+                    throw new RuntimeException(
+                        'could not create file "' . $fullQualifiedFilePath . '"'
+                    );
+                }
+
+                $environment->outputIfVerbosityIsEnabled('finished');
+                $environment->outputIfVerbosityIsEnabled('path:');
+                $environment->outputIfVerbosityIsEnabled('"' . $fullQualifiedFilePath . '"');
+            }
+        }
     },
     $usage
 );
