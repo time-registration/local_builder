@@ -69,6 +69,7 @@ $environment->execute(
         }
         //end of argument validation
 
+        //begin of business logic
         $arguments          = $arguments->getArguments();
         $command            = array_shift($arguments);
         $arguments          = array_map(
@@ -81,6 +82,7 @@ $environment->execute(
             $command .
             ' ' . implode(' ', $arguments);
         passthru($commandToExecute);
+        //end of business logic
     },
     $usage
 );

@@ -42,6 +42,7 @@ $environment->execute(
         $filesystem = $locator->getFilesystem();
         //end of dependencies
 
+        //begin of business logic
         //@todo
         //--add optional parameter to provide the user home
         //--add optional flag to --force (overwrite) --update (try to update)
@@ -86,6 +87,7 @@ return array(
             $environment->outputIfVerbosityIsEnabled('path:');
             $environment->outputIfVerbosityIsEnabled('"' . $fullQualifiedFilePath . '"');
         }
+        //end of business logic
     },
     $usage
 );

@@ -37,10 +37,9 @@ $usage          = basename(__FILE__) . ' <subject> <description> [-v|--verbose]'
 $environment->execute(
     function (CommandLineEnvironment $environment) {
         //begin of dependencies
-        $arguments      = $environment->getArguments();
-        $locator        = new ApplicationLocator();
-        $configuration  = $locator->getConfiguration();
-        $values         = $arguments->getValues();
+        $arguments  = $environment->getArguments();
+        $locator    = new ApplicationLocator();
+        $values     = $arguments->getValues();
         //end of dependencies
 
         $valuesNotAreValid = (!count($values) == 2);
@@ -52,19 +51,11 @@ $environment->execute(
             );
         }
 
-        $description        = $values[1];
-        $subject            = $values[0];
-        $subjectIsToLong    = (strlen($subject) > $configuration->getFixedCharacterNumberOfSubjectSection());
-
-        if ($subjectIsToLong) {
-            throw new InvalidArgumentException(
-                'provided subject is to long, maximum character length is ' .
-                    $configuration->getFixedCharacterNumberOfSubjectSection()
-            );
-        }
+        $description    = $values[1];
+        $subject        = $values[0];
         //end of argument validation
 
-        //put in your business logic
+        //begin of business logic
         $timestamp              = time();
         $collection             = $locator->getCollectionOfEntries();
         $currentCalendarWeek    = date('W', $timestamp);
@@ -76,6 +67,7 @@ $environment->execute(
         $environment->outputIfVerbosityIsEnabled('added content to file:');
         $environment->outputIfVerbosityIsEnabled('to file:');
         $environment->outputIfVerbosityIsEnabled(basename($collection->getFilePath()));
+        //end of business logic
     },
     $usage
 );

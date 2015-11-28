@@ -29,13 +29,30 @@ require_once $pathToAutoloadFile;
 //end of including composer autoload.php
 
 use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
 $usage			= basename(__FILE__) . ' [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
-        //put in your business logic
+        //begin of dependencies
+        $locator = new ApplicationLocator();
+        //end of dependencies
+
+        //begin of business logic
+        $timestamp              = time();
+        $collection             = $locator->getCollectionOfEntries();
+        $currentCalendarWeek    = date('W', $timestamp);
+
+        $collection->setName($currentCalendarWeek);
+        $collection->addEntry('lunch', '-', $timestamp);
+        $collection->persist();
+
+        $environment->outputIfVerbosityIsEnabled('added content to file:');
+        $environment->outputIfVerbosityIsEnabled('to file:');
+        $environment->outputIfVerbosityIsEnabled(basename($collection->getFilePath()));
+        //end of business logic
     },
     $usage
 );

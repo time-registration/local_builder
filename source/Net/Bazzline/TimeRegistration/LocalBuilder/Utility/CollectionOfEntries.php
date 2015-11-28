@@ -5,6 +5,7 @@
  */
 namespace Net\Bazzline\TimeRegistration\LocalBuilder\Utility;
 
+use InvalidArgumentException;
 use Net\Bazzline\TimeRegistration\LocalBuilder\Configuration\Configuration;
 use RuntimeException;
 
@@ -67,6 +68,7 @@ class CollectionOfEntries
      * @param string $description
      * @param string $subject
      * @param int $timestamp
+     * @throws InvalidArgumentException
      */
     public function addEntry($description, $subject, $timestamp)
     {
@@ -76,6 +78,17 @@ class CollectionOfEntries
         $filesystem     = $this->filesystem;
         $filePath       = $this->getFilePath();
         $timeAsString   = $this->generateTimeAsString($timestamp);
+
+        //begin of argument validation
+        $subjectIsToLong    = (strlen($subject) > $configuration->getFixedCharacterNumberOfSubjectSection());
+
+        if ($subjectIsToLong) {
+            throw new InvalidArgumentException(
+                'provided subject is to long, maximum character length is ' .
+                    $configuration->getFixedCharacterNumberOfSubjectSection()
+            );
+        }
+        //end of argument validation
 
         $timeAsString      .= str_repeat(' ', 3);    //make the string eight characters long
         $subjectAsString    = $subject . str_repeat(
