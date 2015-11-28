@@ -29,22 +29,29 @@ require_once $pathToAutoloadFile;
 //end of including composer autoload.php
 
 use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Configuration\Configuration;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
 $usage			= basename(__FILE__) . ' [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
+        //start of dependencies
+        $locator    = new ApplicationLocator();
+        $filesystem = $locator->getFilesystem();
+        //end of dependencies
+
         //@todo
         //--add optional parameter to provide the user home
         //--add optional flag to --force (overwrite) --update (try to update)
-        $pathToCurrentUserHome  = trim(shell_exec('echo $HOME'));
-        $pathToConfiguration    = '.time-registration/configuration';
-        $configurationFileName  = 'local_builder.php';
+        $pathToCurrentUserHome  = $filesystem->getPathToCurrentUserHome();
+        $pathToConfiguration    = Configuration::RELATIVE_DIRECTORY_PATH;
+        $configurationFileName  = Configuration::FILE_NAME;
         $fullQualifiedPath      = $pathToCurrentUserHome . '/' . $pathToConfiguration;
         $fullQualifiedFilePath  = $fullQualifiedPath . '/' . $configurationFileName;
 
-        $configurationFileDoesExist = file_exists($fullQualifiedFilePath);
+        $configurationFileDoesExist = $filesystem->isFileAvailable($fullQualifiedFilePath);
 
         if ($configurationFileDoesExist) {
             throw new RuntimeException(
@@ -52,21 +59,14 @@ $environment->execute(
             );
         } else {
             $environment->outputIfVerbosityIsEnabled('creating configuration file');
-            $configurationPathDoesNotExist = (!is_dir($fullQualifiedPath));
+            $configurationPathDoesNotExist = (!$filesystem->isDirectoryAvailable($fullQualifiedPath));
 
             if ($configurationPathDoesNotExist) {
-                $couldNotCreateConfigurationPath = (!mkdir($fullQualifiedPath, 0700, true));
+                $filesystem->createDirectoryOrThrowRuntimeException($fullQualifiedPath);
+                $environment->outputIfVerbosityIsEnabled('created path');
+            }
 
-                if ($couldNotCreateConfigurationPath) {
-                    throw new RuntimeException(
-                        'could not create path "' . $fullQualifiedPath . '"'
-                    );
-                } else {
-                    $environment->outputIfVerbosityIsEnabled('created path');
-                }
-
-                $content = '
-<?php
+                $content = '<?php
 /**
  * @author ' . basename(__FILE__) . '
  * @since ' . date('Y-m-d') . '
@@ -80,21 +80,11 @@ return array(
 );
 ';
 
-                $couldNotCreateConfigurationFile = (!file_put_contents(
-                    $fullQualifiedFilePath,
-                    $content
-                ));
+            $filesystem->writeFileContentOrThrowRuntimeException($fullQualifiedFilePath, $content);
 
-                if ($couldNotCreateConfigurationFile) {
-                    throw new RuntimeException(
-                        'could not create file "' . $fullQualifiedFilePath . '"'
-                    );
-                }
-
-                $environment->outputIfVerbosityIsEnabled('finished');
-                $environment->outputIfVerbosityIsEnabled('path:');
-                $environment->outputIfVerbosityIsEnabled('"' . $fullQualifiedFilePath . '"');
-            }
+            $environment->outputIfVerbosityIsEnabled('finished');
+            $environment->outputIfVerbosityIsEnabled('path:');
+            $environment->outputIfVerbosityIsEnabled('"' . $fullQualifiedFilePath . '"');
         }
     },
     $usage

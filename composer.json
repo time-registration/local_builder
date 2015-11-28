@@ -1,5 +1,41 @@
 {
+    "name": "time-registration/local_builder",
+    "description": "free as in freedom local time registration component",
+    "keywords": ["php", "free as in freedom", "gpl", "time registration", "local", "builder"],
+    "type": "project",
     "require": {
-        "net_bazzline/php_component_cli_environment": "0.1.0"
+        "net_bazzline/php_component_cli_environment": "0.1.0",
+        "net_bazzline/php_component_locator_generator": "2.0.5",
+        "php": ">=5.3.3"
+    },
+    "require-dev": {
+        "mikey179/vfsstream": "1.6.0",
+        "phpunit/phpunit": ">=4.8.16"
+    },
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "Stev Leibelt",
+            "email": "artodeto@bazzline.net",
+            "homepage": "https://artodeto.bazzline.net",
+            "role": "Developer"
+        }
+    ],
+    "bin": [
+        "bin/time_registration",
+        "time_registration_create_configuration_file",  
+        "time_registration_create_entry",  
+        "time_registration_finish_day",  
+        "time_registration_finish_with_holiday",
+        "time_registration_finish_with_illness",
+        "time_registration_list_last_day",
+        "time_registration_list_last_week",
+        "time_registration_start_lunch"
+    ],
+    "autoload": {
+        "psr-0": {
+            "Net\\Bazzline\\TimeRegistration\\LocalBuilder": "source/",
+            "Test\\Net\\Bazzline\\TimeRegistration\\LocalBuilder": "test/"
+        }
     }
 }
