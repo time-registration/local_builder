@@ -29,6 +29,7 @@ require_once $pathToAutoloadFile;
 //end of including composer autoload.php
 
 use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
 $usage          = basename(__FILE__) . ' <subject> <description> [-v|--verbose]';
@@ -37,7 +38,9 @@ $environment->execute(
     function (CommandLineEnvironment $environment) {
         //begin of dependencies
         $arguments      = $environment->getArguments();
-        $configuration  = require_once __DIR__ . '/../configuration/configuration.php';
+        $locator        = new ApplicationLocator();
+        $configuration  = $locator->getConfiguration();
+        $filesystem     = $locator->getFilesystem();
         $values         = $arguments->getValues();
         //end of dependencies
 
@@ -52,12 +55,12 @@ $environment->execute(
 
         $description        = $values[1];
         $subject            = $values[0];
-        $subjectIsToLong    = (strlen($subject) > $configuration['fixed_character_number_of_subject_section']);
+        $subjectIsToLong    = (strlen($subject) > $configuration->getFixedCharacterNumberOfSubjectSection());
 
         if ($subjectIsToLong) {
             throw new InvalidArgumentException(
                 'provided subject is to long, maximum character length is ' .
-                    $configuration['fixed_character_number_of_subject_section']
+                    $configuration->getFixedCharacterNumberOfSubjectSection()
             );
         }
         //end of argument validation
@@ -65,11 +68,12 @@ $environment->execute(
         //put in your business logic
         //@todo implement validation
         //
-        $currentCalendarWeek    = date('W');
-        $currentDate            = $configuration['prefix_for_current_day'] . date('ymd');
-        $currentHour            = date('H');
-        $currentMinute          = date('M');
-        $path                   = $configuration['path_to_store_the_data'];
+        $timestamp              = time();
+        $currentCalendarWeek    = date('W', $timestamp);
+        $currentDate            = $configuration->getPrefixForCurrentDay() . date('ymd', $timestamp);
+        $currentHour            = date('H', $timestamp);
+        $currentMinute          = date('i', $timestamp);
+        $path                   = $configuration->getPathToStoreTheData();
         $filePath               = $path . '/' . $currentCalendarWeek . '.md';
 
         if ($currentMinute <= 15) {
@@ -87,10 +91,10 @@ $environment->execute(
                 $timeAsString = '00:00';
             }
         }
-        $timeAsString .= str_repeat(' ', 3);    //make the string eight characters long
-        $subjectAsString = $subject . str_repeat(
+        $timeAsString      .= str_repeat(' ', 3);    //make the string eight characters long
+        $subjectAsString    = $subject . str_repeat(
             ' ',
-            ($configuration['fixed_character_number_of_subject_section'] - strlen($subject))
+            ($configuration->getFixedCharacterNumberOfSubjectSection() - strlen($subject))
         );
         //@todo
         //--if entry with $timeAsString for $currentDate exists, throw exception
@@ -103,36 +107,34 @@ $environment->execute(
         //begin of add current date as header to the file
         $isTheFirstEntryFromTheCurrentDay = true;
 
-        if (file_exists($filePath)) {
-            $string = file_get_contents($filePath);
-            $lines  = explode(PHP_EOL, $string);
-
-            foreach ($lines as $line) {
-                if ($line == $currentDate) {
-                    $isTheFirstEntryFromTheCurrentDay = false;
-                    break;
-                }
+        if ($filesystem->isFileAvailable($filePath)) {
+            $isTheFirstEntryFromTheCurrentDay = (!$filesystem->fileContainsLine($filePath, $currentDate));
+        } else {
+            if (!$filesystem->isDirectoryAvailable($path)) {
+                $filesystem->createDirectoryOrThrowRuntimeException($path);
             }
         }
 
         if ($isTheFirstEntryFromTheCurrentDay) {
             $content = $currentDate . PHP_EOL . PHP_EOL . $content;
+        } else {
+            $lineNumberFromCurrentDate = $filesystem->getLineNumberOfLineInFile($filePath, $currentDate);
+            if ($lineNumberFromCurrentDate !== false) {
+                if ($filesystem->fileContainsLine($filePath, '^' . $timeAsString, $lineNumberFromCurrentDate)) {
+                    throw new RuntimeException(
+                        'entry for current time (' . trim($timeAsString) . ') in current date (' . $currentDate . ') already exist'
+                    );
+                }
+            }
         }
         //end of add current date as header to the file
 
-        $couldNotWriteContent = (file_put_contents($filePath, $content, FILE_APPEND) === false);
+        $filesystem->writeFileContentOrThrowRuntimeException($filePath, $content);
 
-        if ($couldNotWriteContent) {
-            $environment->output('could not write to file:');
-            $environment->output(basename($filePath));
-            $environment->output('in path:');
-            $environment->output($path);
-        } else {
-            $environment->outputIfVerbosityIsEnabled('added content:');
-            $environment->outputIfVerbosityIsEnabled($content);
-            $environment->outputIfVerbosityIsEnabled('to file:');
-            $environment->outputIfVerbosityIsEnabled(basename($filePath));
-        }
+        $environment->outputIfVerbosityIsEnabled('added content:');
+        $environment->outputIfVerbosityIsEnabled($content);
+        $environment->outputIfVerbosityIsEnabled('to file:');
+        $environment->outputIfVerbosityIsEnabled(basename($filePath));
     },
     $usage
 );

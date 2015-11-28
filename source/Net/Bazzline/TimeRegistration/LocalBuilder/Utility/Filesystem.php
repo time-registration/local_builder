@@ -53,6 +53,47 @@ class Filesystem
     }
 
     /**
+     * @param string $path
+     * @param string $pattern
+     * @param int $startFromLineNumber
+     * @return bool
+     */
+    public function fileContainsLine($path, $pattern, $startFromLineNumber = 0)
+    {
+        return ($this->getLineNumberOfLineInFile($path, $pattern, $startFromLineNumber) !== false);
+    }
+
+    /**
+     * @param string $path
+     * @param string $pattern
+     * @param int $startFromLineNumber
+     * @return false|int - false if line was not found
+     */
+    public function getLineNumberOfLineInFile($path, $pattern, $startFromLineNumber = 0)
+    {
+        $contains   = false;
+        $string     = $this->readFileContent($path);
+        $currentLineNumber = 0;
+        $lines      = explode(PHP_EOL, $string);
+
+        foreach ($lines as $currentLine) {
+            $checkLine = ($currentLineNumber >= $startFromLineNumber);
+
+            if ($checkLine) {
+                $lineContainsPattern = (preg_match('/' . $pattern . '/', $currentLine) === 1);
+
+                if ($lineContainsPattern) {
+                    $contains = true;
+                    break;
+                }
+            }
+            ++$currentLineNumber;
+        }
+
+        return ($contains ? $currentLineNumber : false);
+    }
+
+    /**
      * @return string
      */
     public function getPathToCurrentUserHome()
@@ -76,6 +117,15 @@ class Filesystem
     public function isFileAvailable($path)
     {
         return (is_file($path));
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    public function readFileContent($path)
+    {
+        return file_get_contents($path);
     }
 
     /**

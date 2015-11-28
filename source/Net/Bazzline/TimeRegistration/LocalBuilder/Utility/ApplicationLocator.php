@@ -7,13 +7,14 @@
 namespace Net\Bazzline\TimeRegistration\LocalBuilder\Utility;
 
 use Net\Bazzline\Component\Locator\FactoryInterface;
+use Net\Bazzline\Component\Locator\LocatorInterface;
 
 /**
  * Class ApplicationLocator
  *
  * @package Net\Bazzline\TimeRegistration\LocalBuilder\Utility
  */
-class ApplicationLocator
+class ApplicationLocator implements LocatorInterface
 {
     /**
      * @var $factoryInstancePool

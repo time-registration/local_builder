@@ -52,5 +52,7 @@ class ConfigurationFactory implements FactoryInterface
                 'configuration file not available'
             );
         }
+
+        return $configuration;
     }
 }
