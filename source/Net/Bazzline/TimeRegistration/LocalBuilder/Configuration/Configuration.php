@@ -7,8 +7,9 @@ namespace Net\Bazzline\TimeRegistration\LocalBuilder\Configuration;
 
 class Configuration
 {
-    const RELATIVE_DIRECTORY_PATH   = '.time-registration/configuration';
+    const CURRENT_VERSION           = 0;
     const FILE_NAME                 = 'local_builder.php';
+    const RELATIVE_DIRECTORY_PATH   = '.time-registration/configuration';
 
     /** @var int */
     private $fixedCharacterNumberOfSubjectSection;
@@ -24,7 +25,7 @@ class Configuration
      */
     public function getCurrentVersion()
     {
-        return 0;
+        return self::CURRENT_VERSION;
     }
 
     /**
