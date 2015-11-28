@@ -27,6 +27,14 @@ class ApplicationLocator implements LocatorInterface
     private $sharedInstancePool = array();
 
     /**
+     * @return \Net\Bazzline\TimeRegistration\LocalBuilder\Utility\CollectionOfEntries
+     */
+    public function getCollectionOfEntries()
+    {
+        return $this->fetchFromFactoryInstancePool('\Net\Bazzline\TimeRegistration\LocalBuilder\Utility\CollectionOfEntriesFactory')->create();
+    }
+
+    /**
      * @return \Net\Bazzline\TimeRegistration\LocalBuilder\Configuration\Configuration
      */
     public function getConfiguration()

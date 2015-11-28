@@ -7,6 +7,13 @@ return array(
     'file_path' => __DIR__ . '/../source/Net/Bazzline/TimeRegistration/LocalBuilder/Utility',
     'instances' => array(
         array(
+            'alias'         => 'CollectionOfEntries',
+            'class_name'    => '\Net\Bazzline\TimeRegistration\LocalBuilder\Utility\CollectionOfEntriesFactory',
+            'is_factory'    => true,
+            'is_shared'     => false,
+            'return_value'  => '\Net\Bazzline\TimeRegistration\LocalBuilder\Utility\CollectionOfEntries'
+        ),
+        array(
             'alias'         => 'Configuration',
             'class_name'    => '\Net\Bazzline\TimeRegistration\LocalBuilder\Configuration\ConfigurationFactory',
             'is_factory'    => true,

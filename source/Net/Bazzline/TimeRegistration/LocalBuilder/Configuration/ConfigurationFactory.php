@@ -6,25 +6,15 @@
 namespace Net\Bazzline\TimeRegistration\LocalBuilder\Configuration;
 
 use InvalidArgumentException;
-use Net\Bazzline\Component\Locator\FactoryInterface;
-use Net\Bazzline\Component\Locator\LocatorInterface;
-use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\AbstractFactory;
 use RuntimeException;
 
-class ConfigurationFactory implements FactoryInterface
+class ConfigurationFactory extends AbstractFactory
 {
-    /** @var LocatorInterface|ApplicationLocator */
-    private $locator;
-
-    public function setLocator(LocatorInterface $locator)
-    {
-        $this->locator = $locator;
-    }
-
     public function create()
     {
         $configuration  = new Configuration();
-        $locator        = $this->locator;
+        $locator        = $this->getLocator();
         $filesystem     = $locator->getFilesystem();
 
         $pathToCurrentUserHome  = $filesystem->getPathToCurrentUserHome();

@@ -40,7 +40,6 @@ $environment->execute(
         $arguments      = $environment->getArguments();
         $locator        = new ApplicationLocator();
         $configuration  = $locator->getConfiguration();
-        $filesystem     = $locator->getFilesystem();
         $values         = $arguments->getValues();
         //end of dependencies
 
@@ -66,75 +65,17 @@ $environment->execute(
         //end of argument validation
 
         //put in your business logic
-        //@todo implement validation
-        //
         $timestamp              = time();
+        $collection             = $locator->getCollectionOfEntries();
         $currentCalendarWeek    = date('W', $timestamp);
-        $currentDate            = $configuration->getPrefixForCurrentDay() . date('ymd', $timestamp);
-        $currentHour            = date('H', $timestamp);
-        $currentMinute          = date('i', $timestamp);
-        $path                   = $configuration->getPathToStoreTheData();
-        $filePath               = $path . '/' . $currentCalendarWeek . '.md';
 
-        if ($currentMinute <= 15) {
-            $timeAsString = $currentHour . ':' . 15;
-        } else if ($currentMinute <= 30) {
-            $timeAsString = $currentHour . ':' . 30;
-        } else if ($currentMinute <= 45) {
-            $timeAsString = $currentHour . ':' . 45;
-        } else {
-            if ($currentHour < 9) {
-                $timeAsString = '0' . ($currentHour + 1) . ':00';
-            } else if ($currentHour < 23) {
-                $timeAsString = ($currentHour + 1) . ':00';
-            } else {
-                $timeAsString = '00:00';
-            }
-        }
-        $timeAsString      .= str_repeat(' ', 3);    //make the string eight characters long
-        $subjectAsString    = $subject . str_repeat(
-            ' ',
-            ($configuration->getFixedCharacterNumberOfSubjectSection() - strlen($subject))
-        );
-        //@todo
-        //--if entry with $timeAsString for $currentDate exists, throw exception
-        //--move whole file generation into separate class
-        //--move configuration instantiation into a class
-        //--move whole line generation into separate class
+        $collection->setName($currentCalendarWeek);
+        $collection->addEntry($description, $subject, $timestamp);
+        $collection->persist();
 
-        $content = $timeAsString . $subjectAsString . $description . PHP_EOL;
-
-        //begin of add current date as header to the file
-        $isTheFirstEntryFromTheCurrentDay = true;
-
-        if ($filesystem->isFileAvailable($filePath)) {
-            $isTheFirstEntryFromTheCurrentDay = (!$filesystem->fileContainsLine($filePath, $currentDate));
-        } else {
-            if (!$filesystem->isDirectoryAvailable($path)) {
-                $filesystem->createDirectoryOrThrowRuntimeException($path);
-            }
-        }
-
-        if ($isTheFirstEntryFromTheCurrentDay) {
-            $content = $currentDate . PHP_EOL . PHP_EOL . $content;
-        } else {
-            $lineNumberFromCurrentDate = $filesystem->getLineNumberOfLineInFile($filePath, $currentDate);
-            if ($lineNumberFromCurrentDate !== false) {
-                if ($filesystem->fileContainsLine($filePath, '^' . $timeAsString, $lineNumberFromCurrentDate)) {
-                    throw new RuntimeException(
-                        'entry for current time (' . trim($timeAsString) . ') in current date (' . $currentDate . ') already exist'
-                    );
-                }
-            }
-        }
-        //end of add current date as header to the file
-
-        $filesystem->writeFileContentOrThrowRuntimeException($filePath, $content);
-
-        $environment->outputIfVerbosityIsEnabled('added content:');
-        $environment->outputIfVerbosityIsEnabled($content);
+        $environment->outputIfVerbosityIsEnabled('added content to file:');
         $environment->outputIfVerbosityIsEnabled('to file:');
-        $environment->outputIfVerbosityIsEnabled(basename($filePath));
+        $environment->outputIfVerbosityIsEnabled(basename($collection->getFilePath()));
     },
     $usage
 );
