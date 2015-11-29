@@ -32,6 +32,9 @@ class CollectionOfEntries
     /** @var Time */
     private $time;
 
+    /** @var int */
+    private $year;
+
     /**
      * @param Configuration $configuration
      */
@@ -64,6 +67,15 @@ class CollectionOfEntries
     public function setName($name)
     {
         $this->name = $name . '.md';
+        $this->loadContentIfPossible();
+    }
+
+    /**
+     * @param int $year
+     */
+    public function setYear($year)
+    {
+        $this->year = $year;
         $this->loadContentIfPossible();
     }
 
@@ -200,7 +212,16 @@ class CollectionOfEntries
      */
     public function getFilePath()
     {
-        return $this->path . DIRECTORY_SEPARATOR . $this->name;
+        return $this->getPath() . DIRECTORY_SEPARATOR . $this->name;
+    }
+
+    /**
+     * @return string
+     * @todo implement validation and throw exception
+     */
+    public function getPath()
+    {
+        return $this->path . DIRECTORY_SEPARATOR . $this->year;
     }
 
     /**
@@ -244,12 +265,20 @@ class CollectionOfEntries
 
     private function loadContentIfPossible()
     {
-        $tryToLoadContent = ((!is_null($this->name))
-            && (!is_null($this->path)));
+        $tryToLoadContent = (
+            (!is_null($this->name))
+            && (!is_null($this->path))
+            && (!is_null($this->year))
+        );
 
         if ($tryToLoadContent) {
             $filesystem = $this->filesystem;
+            $path       = $this->getPath();
             $filePath   = $this->getFilePath();
+
+            if (!$filesystem->isDirectoryAvailable($path)) {
+                $filesystem->createDirectoryOrThrowRuntimeException($path);
+            }
 
             if ($filesystem->isFileAvailable($filePath)) {
                 $contentAsString    = $this->filesystem->readFileContent($filePath);

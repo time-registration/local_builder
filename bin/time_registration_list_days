@@ -91,6 +91,7 @@ $environment->execute(
                 if ($lastDateTime->getTimestamp() <= $firstDateTime->getTimestamp()) {
                     $collection = $locator->getCollectionOfEntries();
                     $collection->setName($currentCalendarWeek);
+                    $collection->setYear($time->createYear($lastDateTime->getTimestamp()));
 
                     if ($collection->exists()) {
                         $entries = $collection->getEntries($lastDateTime->getTimestamp());

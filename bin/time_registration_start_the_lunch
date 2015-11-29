@@ -55,6 +55,7 @@ $environment->execute(
         $currentCalendarWeek    = $time->createCalendarWeek($timestamp);
 
         $collection->setName($currentCalendarWeek);
+        $collection->setYear($time->createYear($timestamp));
         $collection->addEntry($description, 'lunch', $timestamp);
         $collection->persist();
 

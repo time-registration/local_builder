@@ -4,28 +4,28 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "830f8736c6c503a762f8927e12e202d3",
-    "content-hash": "7ceb0d1fdba97be6d15f1b432918a09c",
+    "hash": "cd7c706d41e0c04beb81f068c3761326",
+    "content-hash": "7458e7161750a12ee1f08ace34dc23fe",
     "packages": [
         {
             "name": "net_bazzline/php_component_cli_arguments",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bazzline/php_component_cli_arguments.git",
-                "reference": "6ec4b50903e5a561a71859ea62f9b079a9f3a045"
+                "reference": "6083aac2fb0c5b2fdf6f75ca7856b5c3c9ee65b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bazzline/php_component_cli_arguments/zipball/6ec4b50903e5a561a71859ea62f9b079a9f3a045",
-                "reference": "6ec4b50903e5a561a71859ea62f9b079a9f3a045",
+                "url": "https://api.github.com/repos/bazzline/php_component_cli_arguments/zipball/6083aac2fb0c5b2fdf6f75ca7856b5c3c9ee65b0",
+                "reference": "6083aac2fb0c5b2fdf6f75ca7856b5c3c9ee65b0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.8.*"
+                "phpunit/phpunit": ">=4.8.16"
             },
             "type": "library",
             "autoload": {
@@ -58,24 +58,24 @@
                 "shell",
                 "trigger"
             ],
-            "time": "2015-08-18 15:53:30"
+            "time": "2015-11-07 20:25:06"
         },
         {
             "name": "net_bazzline/php_component_cli_environment",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bazzline/php_component_cli_environment.git",
-                "reference": "33519f86afaa6c65586b69072bc2b68b58abdab5"
+                "reference": "fd03e250813abfe3f1c28d9676ff461d165cc1ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bazzline/php_component_cli_environment/zipball/33519f86afaa6c65586b69072bc2b68b58abdab5",
-                "reference": "33519f86afaa6c65586b69072bc2b68b58abdab5",
+                "url": "https://api.github.com/repos/bazzline/php_component_cli_environment/zipball/fd03e250813abfe3f1c28d9676ff461d165cc1ec",
+                "reference": "fd03e250813abfe3f1c28d9676ff461d165cc1ec",
                 "shasum": ""
             },
             "require": {
-                "net_bazzline/php_component_cli_arguments": "1.1.1",
+                "net_bazzline/php_component_cli_arguments": "1.1.2",
                 "net_bazzline/php_component_toolbox": ">=1.5",
                 "php": ">=5.3.3"
             },
@@ -112,7 +112,63 @@
                 "lgpl",
                 "php"
             ],
-            "time": "2015-10-10 21:25:39"
+            "time": "2015-11-29 20:29:55"
+        },
+        {
+            "name": "net_bazzline/php_component_cli_readline",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bazzline/php_component_cli_readline.git",
+                "reference": "be19a77cee9b0843c80bfea0bc23f633c2d1d369"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bazzline/php_component_cli_readline/zipball/be19a77cee9b0843c80bfea0bc23f633c2d1d369",
+                "reference": "be19a77cee9b0843c80bfea0bc23f633c2d1d369",
+                "shasum": ""
+            },
+            "require": {
+                "net_bazzline/php_component_cli_arguments": "1.1.2",
+                "net_bazzline/php_component_generic_agreement": "1.0.1",
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.4",
+                "phpunit/phpunit": ">=4.7.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Net\\Bazzline\\Component\\Cli\\Readline": "source/",
+                    "Test\\Net\\Bazzline\\Component\\Cli\\Readline": "test/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPLv3"
+            ],
+            "authors": [
+                {
+                    "name": "Stev Leibelt",
+                    "email": "artodeto@bazzline.net",
+                    "homepage": "https://artodeto.bazzline.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "free as in freedom php component to easy up usage of php readline implementation in php 5.3 and above",
+            "keywords": [
+                "autocomplete",
+                "cli",
+                "component",
+                "console",
+                "free as in freedom",
+                "lgpl",
+                "php",
+                "readline",
+                "unix"
+            ],
+            "time": "2015-11-29 20:23:53"
         },
         {
             "name": "net_bazzline/php_component_code_generator",
@@ -219,6 +275,52 @@
                 "wrapper"
             ],
             "time": "2015-09-18 12:45:48"
+        },
+        {
+            "name": "net_bazzline/php_component_generic_agreement",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bazzline/php_component_generic_agreement.git",
+                "reference": "2b0c3953dd71abcc0d5a2868690b733a2766cd7a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bazzline/php_component_generic_agreement/zipball/2b0c3953dd71abcc0d5a2868690b733a2766cd7a",
+                "reference": "2b0c3953dd71abcc0d5a2868690b733a2766cd7a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Net\\Bazzline\\Component\\GenericAgreement": "source/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPLv3"
+            ],
+            "authors": [
+                {
+                    "name": "Stev Leibelt",
+                    "email": "artodeto@bazzline.net",
+                    "homepage": "https://artodeto.bazzline.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "free as in freedom php component that includes generic agreements in the Net\\Bazzline code base",
+            "keywords": [
+                "component",
+                "free as in freedom",
+                "generic",
+                "interface",
+                "php",
+                "reusable"
+            ],
+            "time": "2015-07-05 15:20:27"
         },
         {
             "name": "net_bazzline/php_component_locator_generator",

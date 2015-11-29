@@ -48,6 +48,7 @@ $environment->execute(
 
         //begin of business logic
         $collection->setName($currentCalendarWeek);
+        $collection->setYear($time->createYear($timestamp));
         $entries                    = $collection->getEntries($timestamp);
         $isTheOnlyEntryForTheDay    = empty($entries);
         $description                = $arguments->hasValues()

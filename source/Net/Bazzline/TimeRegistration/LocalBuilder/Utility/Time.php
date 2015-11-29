@@ -68,6 +68,15 @@ class Time
     }
 
     /**
+     * @param int $timestamp
+     * @return int
+     */
+    public function createYear($timestamp)
+    {
+        return date('Y', $timestamp);
+    }
+
+    /**
      * @param int $seconds
      * @return string
      */
