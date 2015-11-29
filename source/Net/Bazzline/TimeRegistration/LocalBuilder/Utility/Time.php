@@ -7,6 +7,18 @@ namespace Net\Bazzline\TimeRegistration\LocalBuilder\Utility;
 
 class Time
 {
+    /** @var null|int */
+    private $timestamp;
+
+    /**
+     * @param string $timestamp
+     * @return int
+     */
+    public function createCalendarWeek($timestamp)
+    {
+        return (int) date('W', $timestamp);
+    }
+
     /**
      * @param int $timestamp
      * @return string
@@ -66,5 +78,17 @@ class Time
         }
 
         return $timeAsString;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTimestamp()
+    {
+        if (is_null($this->timestamp)) {
+            $this->timestamp = time();
+        }
+
+        return $this->timestamp;
     }
 }

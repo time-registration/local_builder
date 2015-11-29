@@ -39,11 +39,11 @@ $environment->execute(
         //begin of dependencies
         $arguments              = $environment->getArguments();
         $locator                = new ApplicationLocator();
-        $timestamp              = time();
         $collection             = $locator->getCollectionOfEntries();
-        $currentCalendarWeek    = date('W', $timestamp);
         $string                 = $locator->getCharacterString();
         $time                   = $locator->getTime();
+        $timestamp              = $time->getTimestamp();
+        $currentCalendarWeek    = $time->createCalendarWeek($timestamp);
         //end of dependencies
 
         //begin of business logic

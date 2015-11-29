@@ -246,6 +246,9 @@ class CollectionOfEntries
                 array_pop($content);    //removes empty last line
                 $this->content      = $content;
                 $this->isModified   = false;
+            } else {
+                $this->content      = array();
+                $this->isModified   = false;
             }
         }
     }

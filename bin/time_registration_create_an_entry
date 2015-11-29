@@ -39,6 +39,7 @@ $environment->execute(
         //begin of dependencies
         $arguments  = $environment->getArguments();
         $locator    = new ApplicationLocator();
+        $time       = $locator->getTime();
         $values     = $arguments->getValues();
         //end of dependencies
 
@@ -57,9 +58,9 @@ $environment->execute(
 
         //begin of business logic
         //@todo check if day has not finished yet
-        $timestamp              = time();
+        $timestamp              = $time->getTimestamp();
         $collection             = $locator->getCollectionOfEntries();
-        $currentCalendarWeek    = date('W', $timestamp);
+        $currentCalendarWeek    = $time->createCalendarWeek($timestamp);
 
         $collection->setName($currentCalendarWeek);
         $collection->addEntry($description, $subject, $timestamp);

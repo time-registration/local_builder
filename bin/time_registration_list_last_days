@@ -29,13 +29,85 @@ require_once $pathToAutoloadFile;
 //end of including composer autoload.php
 
 use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
-$usage			= basename(__FILE__) . ' [-v|--verbose]';
+$usage			= basename(__FILE__) . ' <date of the newest entry - yyyy-mm-dd> <number of days in the past> [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
-        //put in your business logic
+        //begin of dependencies
+        $arguments  = $environment->getArguments();
+        $locator    = new ApplicationLocator();
+        $text       = $environment->getText();
+        $time       = $locator->getTime();
+        $values     = $arguments->getValues();
+        //end of dependencies
+
+        //begin of validation
+        $numberOfValues = count($values);
+        if ($numberOfValues < 2) {
+            throw new InvalidArgumentException(
+                'invalid number of arguments supplied'
+            );
+        }
+
+        //@todo implement validation to see if it is a valid date
+        $dateOfTheNewestEntry   = $values[0];
+        $numberOfDaysInThePast  = (int) $values[1];
+        //end of validation
+
+        //begin of business logic
+        $firstDateTime  = new DateTime($dateOfTheNewestEntry);
+        $lastDateTime   = new DateTime($dateOfTheNewestEntry);
+        $lastDateTime   = $lastDateTime->sub(
+            new DateInterval(
+                'P' . $numberOfDaysInThePast . 'D'
+            )
+        );
+
+        $calendarWeeks      = array();
+        $firstCalendarWeek  = $time->createCalendarWeek($firstDateTime->getTimestamp());
+        $lastCalendarWeek   = $time->createCalendarWeek($lastDateTime->getTimestamp());
+        $calendarWeek       = $firstCalendarWeek;
+
+        while ($calendarWeek > $lastCalendarWeek) {
+            $calendarWeeks[] = $calendarWeek;
+            --$calendarWeek;
+        }
+        $calendarWeeks = array_reverse($calendarWeeks);
+
+        foreach ($calendarWeeks as $calendarWeek) {
+            $environment->output('calendar week: ' . $calendarWeek);
+            $environment->output('');
+            $currentCalendarWeek = $time->createCalendarWeek($lastDateTime->getTimestamp());
+
+            while ($currentCalendarWeek < $calendarWeek) {
+                $collection = $locator->getCollectionOfEntries();
+                $collection->setName($currentCalendarWeek);
+                $entries = $collection->getEntries($lastDateTime->getTimestamp());
+
+                if (empty($entries)) {
+                    $environment->outputIfVerbosityIsEnabled(
+                        'no entries found for date ' .
+                        $lastDateTime->format('Y-m-d')
+                    );
+                } else {
+                    $environment->output($lastDateTime->format('Y-m-d'));
+                    foreach ($entries as $entry) {
+                        $isNotAComment = (!$text->startsWith($entry, '#'));
+                        if ($isNotAComment) {
+                            $environment->output($entry);
+                        }
+                    }
+                    $environment->output('');
+                }
+
+                $lastDateTime->add(new DateInterval('P1D'));
+                $currentCalendarWeek = $time->createCalendarWeek($lastDateTime->getTimestamp());
+            }
+        }
+        //end of business logic
     },
     $usage
 );
