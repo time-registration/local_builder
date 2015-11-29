@@ -40,6 +40,7 @@ $environment->execute(
         //start of dependencies
         $locator    = new ApplicationLocator();
         $filesystem = $locator->getFilesystem();
+        $time       = $locator->getTime();
         //end of dependencies
 
         //begin of business logic
@@ -70,7 +71,7 @@ $environment->execute(
                 $content = '<?php
 /**
  * @author ' . basename(__FILE__) . '
- * @since ' . date('Y-m-d') . '
+ * @since ' . $time->createDate($time->getTimestamp()) . '
  */
 
 return array(

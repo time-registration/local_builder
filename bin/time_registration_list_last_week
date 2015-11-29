@@ -29,13 +29,30 @@ require_once $pathToAutoloadFile;
 //end of including composer autoload.php
 
 use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
 $usage			= basename(__FILE__) . ' [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
-        //put in your business logic
+        //begin of dependencies
+        $locator    = new ApplicationLocator();
+        $time       = $locator->getTime();
+        $timestamp  = $time->getTimestamp();
+        $dateTime   = $time->createDateTime($timestamp);
+        $dateTime->sub(new DateInterval('P1D'));
+        //end of dependencies
+
+        //begin of business logic
+        $command = __DIR__ . '/time_registration_list_days ' . $time->createDate($dateTime->getTimestamp()) . ' 7';
+
+        if ($environment->beVerbose()) {
+            $command .= ' -v';
+        }
+
+        passthru($command);
+        //end of business logic
     },
     $usage
 );

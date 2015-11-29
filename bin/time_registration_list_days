@@ -71,36 +71,46 @@ $environment->execute(
         $lastCalendarWeek   = $time->createCalendarWeek($lastDateTime->getTimestamp());
         $calendarWeek       = $firstCalendarWeek;
 
-        while ($calendarWeek > $lastCalendarWeek) {
-            $calendarWeeks[] = $calendarWeek;
-            --$calendarWeek;
+        if ($firstCalendarWeek === $lastCalendarWeek) {
+            $calendarWeeks[] = $firstCalendarWeek;
+        } else {
+            while ($calendarWeek > $lastCalendarWeek) {
+                $calendarWeeks[] = $calendarWeek;
+                --$calendarWeek;
+            }
+            $calendarWeeks = array_reverse($calendarWeeks);
         }
-        $calendarWeeks = array_reverse($calendarWeeks);
 
         foreach ($calendarWeeks as $calendarWeek) {
             $environment->output('calendar week: ' . $calendarWeek);
             $environment->output('');
             $currentCalendarWeek = $time->createCalendarWeek($lastDateTime->getTimestamp());
 
-            while ($currentCalendarWeek < $calendarWeek) {
-                $collection = $locator->getCollectionOfEntries();
-                $collection->setName($currentCalendarWeek);
-                $entries = $collection->getEntries($lastDateTime->getTimestamp());
+            //@todo here is a lot of optimization potential
+            while ($currentCalendarWeek <= $calendarWeek) {
+                if ($lastDateTime->getTimestamp() <= $firstDateTime->getTimestamp()) {
+                    $collection = $locator->getCollectionOfEntries();
+                    $collection->setName($currentCalendarWeek);
 
-                if (empty($entries)) {
-                    $environment->outputIfVerbosityIsEnabled(
-                        'no entries found for date ' .
-                        $lastDateTime->format('Y-m-d')
-                    );
-                } else {
-                    $environment->output($lastDateTime->format('Y-m-d'));
-                    foreach ($entries as $entry) {
-                        $isNotAComment = (!$text->startsWith($entry, '#'));
-                        if ($isNotAComment) {
-                            $environment->output($entry);
+                    if ($collection->exists()) {
+                        $entries = $collection->getEntries($lastDateTime->getTimestamp());
+
+                        if (empty($entries)) {
+                            $environment->outputIfVerbosityIsEnabled(
+                                'no entries found for date ' .
+                                $lastDateTime->format('Y-m-d')
+                            );
+                        } else {
+                            $environment->output($lastDateTime->format('Y-m-d'));
+                            foreach ($entries as $entry) {
+                                $isNotAComment = (!$text->startsWith($entry, '#'));
+                                if ($isNotAComment) {
+                                    $environment->output($entry);
+                                }
+                            }
+                            $environment->output('');
                         }
                     }
-                    $environment->output('');
                 }
 
                 $lastDateTime->add(new DateInterval('P1D'));

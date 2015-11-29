@@ -5,6 +5,8 @@
  */
 namespace Net\Bazzline\TimeRegistration\LocalBuilder\Utility;
 
+use DateTime;
+
 class Time
 {
     /** @var null|int */
@@ -17,6 +19,24 @@ class Time
     public function createCalendarWeek($timestamp)
     {
         return (int) date('W', $timestamp);
+    }
+
+    /**
+     * @param int $timestamp
+     * @return bool|string
+     */
+    public function createDate($timestamp)
+    {
+        return date('Y-m-d', $timestamp);
+    }
+
+    /**
+     * @param int $timestamp
+     * @return DateTime
+     */
+    public function createDateTime($timestamp)
+    {
+        return new DateTime(date('Y-m-d H:i:s', $timestamp));
     }
 
     /**

@@ -146,6 +146,17 @@ class CollectionOfEntries
     }
 
     /**
+     * @return bool
+     */
+    public function exists()
+    {
+        $filesystem = $this->filesystem;
+        $filePath   = $this->getFilePath();
+
+        return $filesystem->isFileAvailable($filePath);
+    }
+
+    /**
      * @param int $timestamp
      * @return array
      */
@@ -248,7 +259,7 @@ class CollectionOfEntries
                 $this->isModified   = false;
             } else {
                 $this->content      = array();
-                $this->isModified   = false;
+                $this->isModified   = true;
             }
         }
     }
