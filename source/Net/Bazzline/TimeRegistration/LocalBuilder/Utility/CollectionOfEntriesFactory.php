@@ -13,9 +13,11 @@ class CollectionOfEntriesFactory extends AbstractFactory
         $locator        = $this->getLocator();
         $configuration  = $locator->getConfiguration();
         $filesystem     = $locator->getFilesystem();
+        $time           = $locator->getTime();
 
         $collection->injectConfiguration($configuration);
         $collection->injectFilesystem($filesystem);
+        $collection->injectTime($time);
 
         return $collection;
     }

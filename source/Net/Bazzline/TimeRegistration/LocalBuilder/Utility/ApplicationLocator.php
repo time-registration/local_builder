@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Net\Bazzline\Component\Locator
- * @since 2015-11-28
+ * @since 2015-11-29
  */
 
 namespace Net\Bazzline\TimeRegistration\LocalBuilder\Utility;
@@ -57,6 +57,22 @@ class ApplicationLocator implements LocatorInterface
     public function getFilesystem()
     {
         return $this->fetchFromSharedInstancePool('\Net\Bazzline\TimeRegistration\LocalBuilder\Utility\Filesystem');
+    }
+
+    /**
+     * @return \Net\Bazzline\TimeRegistration\LocalBuilder\Utility\CharacterString
+     */
+    public function getCharacterString()
+    {
+        return $this->fetchFromSharedInstancePool('\Net\Bazzline\TimeRegistration\LocalBuilder\Utility\CharacterString');
+    }
+
+    /**
+     * @return \Net\Bazzline\TimeRegistration\LocalBuilder\Utility\Time
+     */
+    public function getTime()
+    {
+        return $this->fetchFromSharedInstancePool('\Net\Bazzline\TimeRegistration\LocalBuilder\Utility\Time');
     }
 
     /**

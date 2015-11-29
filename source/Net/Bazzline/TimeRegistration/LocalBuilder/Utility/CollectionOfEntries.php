@@ -11,7 +11,7 @@ use RuntimeException;
 
 class CollectionOfEntries
 {
-    /** @var string */
+    /** @var array */
     private $content;
 
     /** @var Configuration */
@@ -28,6 +28,9 @@ class CollectionOfEntries
 
     /** @var string */
     private $path;
+
+    /** @var Time */
+    private $time;
 
     /**
      * @param Configuration $configuration
@@ -48,20 +51,20 @@ class CollectionOfEntries
     }
 
     /**
+     * @param Time $time
+     */
+    public function injectTime(Time $time)
+    {
+        $this->time = $time;
+    }
+
+    /**
      * @param string $name
      */
     public function setName($name)
     {
         $this->name = $name . '.md';
         $this->loadContentIfPossible();
-    }
-
-    /**
-     * @param string $line
-     */
-    public function addLine($line)
-    {
-        $this->addLineToContent($line);
     }
 
     /**
@@ -77,7 +80,8 @@ class CollectionOfEntries
         $path           = $configuration->getPathToStoreTheData();
         $filesystem     = $this->filesystem;
         $filePath       = $this->getFilePath();
-        $timeAsString   = $this->generateTimeAsString($timestamp);
+        $time           = $this->time;
+        $timeAsString   = $time->createHourAndMinutesForAnEntry($timestamp);
 
         //begin of argument validation
         $subjectIsToLong    = (strlen($subject) > $configuration->getFixedCharacterNumberOfSubjectSection());
@@ -134,11 +138,49 @@ class CollectionOfEntries
     }
 
     /**
-     * @return string
+     * @param string $line
      */
-    public function getContent()
+    public function addLine($line)
     {
-        return $this->content;
+        $this->addLineToContent($line);
+    }
+
+    /**
+     * @param int $timestamp
+     * @return array
+     */
+    public function getEntries($timestamp)
+    {
+        $currentDate            = $this->generateCurrentDate($timestamp);
+        $entries                = array();
+        $lineNumberToStartWith  = false;
+
+        foreach ($this->content as $lineNumber => $line) {
+            if ($line === $currentDate) {
+                $lineNumberToStartWith = $lineNumber;
+                break;
+            }
+        }
+
+        if ($lineNumberToStartWith !== false) {
+            foreach ($this->content as $lineNumber => $line) {
+                if ($lineNumber > $lineNumberToStartWith) {
+                    $lineHasContent = (strlen($line) > 0);
+                    $reachedNextDay = (($lineHasContent)
+                        && ($line{0} === '_'));
+
+                    if ($reachedNextDay) {
+                        break;
+                    }
+
+                    if ($lineHasContent) {
+                        $entries[] = $line;
+                    }
+                }
+            }
+        }
+
+        return $entries;
     }
 
     /**
@@ -187,34 +229,6 @@ class CollectionOfEntries
         $currentDate    = $configuration->getPrefixForCurrentDay() . date('ymd', $timestamp);
 
         return $currentDate;
-    }
-
-    /**
-     * @param int $timestamp
-     * @return string
-     */
-    private function generateTimeAsString($timestamp)
-    {
-        $currentHour    = date('H', $timestamp);
-        $currentMinute  = date('i', $timestamp);
-
-        if ($currentMinute <= 15) {
-            $timeAsString = $currentHour . ':' . 15;
-        } else if ($currentMinute <= 30) {
-            $timeAsString = $currentHour . ':' . 30;
-        } else if ($currentMinute <= 45) {
-            $timeAsString = $currentHour . ':' . 45;
-        } else {
-            if ($currentHour < 9) {
-                $timeAsString = '0' . ($currentHour + 1) . ':00';
-            } else if ($currentHour < 23) {
-                $timeAsString = ($currentHour + 1) . ':00';
-            } else {
-                $timeAsString = '00:00';
-            }
-        }
-
-        return $timeAsString;
     }
 
     private function loadContentIfPossible()

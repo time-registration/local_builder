@@ -25,6 +25,18 @@ return array(
             'class_name'    => '\Net\Bazzline\TimeRegistration\LocalBuilder\Utility\Filesystem',
             'is_factory'    => false,
             'is_shared'     => true
+        ),
+        array(
+            'alias'         => 'CharacterString',
+            'class_name'    => '\Net\Bazzline\TimeRegistration\LocalBuilder\Utility\CharacterString',
+            'is_factory'    => false,
+            'is_shared'     => true
+        ),
+        array(
+            'alias'         => 'Time',
+            'class_name'    => '\Net\Bazzline\TimeRegistration\LocalBuilder\Utility\Time',
+            'is_factory'    => false,
+            'is_shared'     => true
         )
     ),
     'method_prefix' => 'get',

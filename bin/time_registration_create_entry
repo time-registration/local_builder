@@ -56,6 +56,7 @@ $environment->execute(
         //end of argument validation
 
         //begin of business logic
+        //@todo check if day has not finished yet
         $timestamp              = time();
         $collection             = $locator->getCollectionOfEntries();
         $currentCalendarWeek    = date('W', $timestamp);

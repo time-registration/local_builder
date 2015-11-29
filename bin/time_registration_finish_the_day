@@ -1,0 +1,112 @@
+#!/bin/env php
+<?php
+/**
+ * @author net_bazzline_create_executable_command_line_file
+ * @since 2015-11-26
+ */
+
+//begin of including composer autoload.php
+$possiblePathsToComposerAutoloadFile = array(
+    __DIR__ . '/../../../autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+    __DIR__ . '/../vendor/autoload.php'
+);
+$pathToAutoloadFileNotFound = true;
+$pathToAutoloadFile         = null;
+foreach ($possiblePathsToComposerAutoloadFile as $path) {
+    if (file_exists($path)) {
+        $pathToAutoloadFile         = $path;
+        $pathToAutoloadFileNotFound = false;
+        break;
+    }
+}
+if ($pathToAutoloadFileNotFound) {
+    echo 'could not find composer autoload.php, no composer installed?' . PHP_EOL;
+    exit(1);
+}
+
+require_once $pathToAutoloadFile;
+//end of including composer autoload.php
+
+use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
+
+$environment    = new CommandLineEnvironment($argv);
+$usage          = basename(__FILE__) . ' [-v|--verbose]';
+
+$environment->execute(
+    function (CommandLineEnvironment $environment) {
+        //begin of dependencies
+        $locator                = new ApplicationLocator();
+        $timestamp              = time();
+        $collection             = $locator->getCollectionOfEntries();
+        $currentCalendarWeek    = date('W', $timestamp);
+        $string                 = $locator->getCharacterString();
+        $time                   = $locator->getTime();
+        //end of dependencies
+
+        //begin of business logic
+        $collection->setName($currentCalendarWeek);
+        $entries = $collection->getEntries($timestamp);
+
+        if (empty($entries)) {
+            throw new RuntimeException(
+                'no entries made for current day'
+            );
+        }
+
+        $collection->addEntry('', '<', $timestamp);
+        $entries = $collection->getEntries($timestamp);
+
+        $lastEntryWasABreakEntry  = false;
+        $breakTimeInSeconds         = 0;
+        $previousDateTime           = null;
+        $workTimeInSeconds          = 0;
+
+        foreach ($entries as $entry) {
+            $timeOfCurrentEntry     = substr($entry, 0, 5);
+            $numbersOfCurrentTime   = $string->filterNumbers($timeOfCurrentEntry);
+            $looksLikeAValidTime = (strlen($numbersOfCurrentTime) === 4);
+
+            if ($looksLikeAValidTime) {
+                $isABreak   = $string->containsOneOf(
+                    $entry,
+                    array(
+                        '  lunch',
+                        '  break'
+                    )
+                );
+                $dateTime   = new DateTime($timeOfCurrentEntry);
+                if ($previousDateTime instanceof Datetime) {
+                    $differenceInSeconds    = $dateTime->getTimestamp() - $previousDateTime->getTimestamp();
+
+                    if ($lastEntryWasABreakEntry) {
+                        $breakTimeInSeconds += $differenceInSeconds;
+                    } else {
+                        $workTimeInSeconds  += $differenceInSeconds;
+                    }
+
+                    if ($isABreak) {
+                        $lastEntryWasABreakEntry = true;
+                    } else {
+                        $lastEntryWasABreakEntry = false;
+                    }
+                }
+                $previousDateTime = $dateTime;
+            }
+        }
+
+        $breakTimeAsString  = $time->formatSecondsIntoHourAndMinutes($breakTimeInSeconds);
+        $workTimeAsString   = $time->formatSecondsIntoHourAndMinutes($workTimeInSeconds);
+
+        $collection->addLine('time spend for break: ' . $breakTimeAsString);
+        $collection->addLine('time spend for work: ' . $workTimeAsString);
+        $collection->persist();
+
+        $environment->outputIfVerbosityIsEnabled('added content to file:');
+        $environment->outputIfVerbosityIsEnabled('to file:');
+        $environment->outputIfVerbosityIsEnabled(basename($collection->getFilePath()));
+        //end of business logic
+    },
+    $usage
+);
