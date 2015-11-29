@@ -22,16 +22,16 @@
         }
     ],
     "bin": [
-        "bin/time_registration",
-        "bin/time_registration_create_configuration_file",
-        "bin/time_registration_create_entry",
-        "bin/time_registration_finish_the_day",
-        "bin/time_registration_finish_the_day_with_holiday",
-        "bin/time_registration_finish_the_day_with_illness",
-        "bin/time_registration_list_last_day",
-        "bin/time_registration_list_last_week",
-        "bin/time_registration_start_a_break",
-        "bin/time_registration_start_the_lunch"
+      "bin/time_registration",
+      "bin/time_registration_create_configuration_file",
+      "bin/time_registration_create_an_entry",
+      "bin/time_registration_finish_the_day",
+      "bin/time_registration_finish_the_day_with_holiday",
+      "bin/time_registration_finish_the_day_with_illness",
+      "bin/time_registration_list_last_day",
+      "bin/time_registration_list_last_week",
+      "bin/time_registration_start_a_break",
+      "bin/time_registration_start_the_lunch"
     ],
     "autoload": {
         "psr-0": {

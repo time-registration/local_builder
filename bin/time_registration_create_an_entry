@@ -42,7 +42,7 @@ $environment->execute(
         $values     = $arguments->getValues();
         //end of dependencies
 
-        $valuesNotAreValid = (!count($values) == 2);
+        $valuesNotAreValid = (!count($values) >= 2);
 
         //begin of argument validation
         if ($valuesNotAreValid) {
@@ -51,8 +51,8 @@ $environment->execute(
             );
         }
 
-        $description    = $values[1];
-        $subject        = $values[0];
+        $subject        = array_shift($values);
+        $description    = implode(' ' , $values);
         //end of argument validation
 
         //begin of business logic
