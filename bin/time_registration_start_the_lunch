@@ -32,21 +32,29 @@ use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
 use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
-$usage			= basename(__FILE__) . ' [-v|--verbose]';
+$usage			= basename(__FILE__) . ' [description] [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
         //begin of dependencies
-        $locator = new ApplicationLocator();
+        $arguments  = $environment->getArguments();
+        $locator    = new ApplicationLocator();
         //end of dependencies
 
         //begin of business logic
+        if ($arguments->hasValues()) {
+            $values         = $arguments->getValues();
+            $description    = implode(' ', $values);
+        } else {
+            $description = '';
+        }
+
         $timestamp              = time();
         $collection             = $locator->getCollectionOfEntries();
         $currentCalendarWeek    = date('W', $timestamp);
 
         $collection->setName($currentCalendarWeek);
-        $collection->addEntry('lunch', '-', $timestamp);
+        $collection->addEntry($description, 'lunch', $timestamp);
         $collection->persist();
 
         $environment->outputIfVerbosityIsEnabled('added content to file:');
