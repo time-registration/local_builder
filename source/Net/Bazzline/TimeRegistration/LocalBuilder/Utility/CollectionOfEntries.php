@@ -140,9 +140,9 @@ class CollectionOfEntries
     /**
      * @param string $line
      */
-    public function addLine($line)
+    public function addComment($line)
     {
-        $this->addLineToContent($line);
+        $this->addLineToContent('#' . $line);
     }
 
     /**

@@ -35,7 +35,15 @@ $usage			= basename(__FILE__) . ' [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
-        //put in your business logic
+        //begin of business logic
+        $command = __DIR__ . '/time_registration_finish_the_day illness';
+
+        if ($environment->beVerbose()) {
+            $command .= ' -v';
+        }
+
+        passthru($command);
+        //begin of business logic
     },
     $usage
 );

@@ -32,11 +32,12 @@ use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
 use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
-$usage          = basename(__FILE__) . ' [-v|--verbose]';
+$usage          = basename(__FILE__) . ' [description] [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
         //begin of dependencies
+        $arguments              = $environment->getArguments();
         $locator                = new ApplicationLocator();
         $timestamp              = time();
         $collection             = $locator->getCollectionOfEntries();
@@ -47,60 +48,65 @@ $environment->execute(
 
         //begin of business logic
         $collection->setName($currentCalendarWeek);
-        $entries = $collection->getEntries($timestamp);
+        $entries                    = $collection->getEntries($timestamp);
+        $isTheOnlyEntryForTheDay    = empty($entries);
+        $description                = $arguments->hasValues()
+            ? implode(' ', $arguments->getValues())
+            : '';
 
-        if (empty($entries)) {
-            throw new RuntimeException(
-                'no entries made for current day'
-            );
-        }
-
-        $collection->addEntry('', '<', $timestamp);
-        $entries = $collection->getEntries($timestamp);
-
-        $lastEntryWasABreakEntry  = false;
-        $breakTimeInSeconds         = 0;
-        $previousDateTime           = null;
-        $workTimeInSeconds          = 0;
-
-        foreach ($entries as $entry) {
-            $timeOfCurrentEntry     = substr($entry, 0, 5);
-            $numbersOfCurrentTime   = $string->filterNumbers($timeOfCurrentEntry);
-            $looksLikeAValidTime = (strlen($numbersOfCurrentTime) === 4);
-
-            if ($looksLikeAValidTime) {
-                $isABreak   = $string->containsOneOf(
-                    $entry,
-                    array(
-                        '  lunch',
-                        '  break'
-                    )
-                );
-                $dateTime   = new DateTime($timeOfCurrentEntry);
-                if ($previousDateTime instanceof Datetime) {
-                    $differenceInSeconds    = $dateTime->getTimestamp() - $previousDateTime->getTimestamp();
-
-                    if ($lastEntryWasABreakEntry) {
-                        $breakTimeInSeconds += $differenceInSeconds;
-                    } else {
-                        $workTimeInSeconds  += $differenceInSeconds;
-                    }
-
-                    if ($isABreak) {
-                        $lastEntryWasABreakEntry = true;
-                    } else {
-                        $lastEntryWasABreakEntry = false;
-                    }
-                }
-                $previousDateTime = $dateTime;
+        if ($isTheOnlyEntryForTheDay) {
+            if (strlen($description) > 0) {
+                $collection->addEntry($description, '<', $timestamp);
             }
+        } else {
+            $collection->addEntry($description, '<', $timestamp);
+            $entries = $collection->getEntries($timestamp);
+
+            $lastEntryWasABreakEntry    = false;
+            $breakTimeInSeconds         = 0;
+            $previousDateTime           = null;
+            $workTimeInSeconds          = 0;
+
+            foreach ($entries as $entry) {
+                $timeOfCurrentEntry     = substr($entry, 0, 5);
+                $numbersOfCurrentTime   = $string->filterNumbers($timeOfCurrentEntry);
+                $looksLikeAValidTime = (strlen($numbersOfCurrentTime) === 4);   //@todo alternative check for "is not a comment"
+
+                if ($looksLikeAValidTime) {
+                    $isABreak   = $string->containsOneOf(
+                        $entry,
+                        array(
+                            '  lunch',
+                            '  break'
+                        )
+                    );
+                    $dateTime = new DateTime($timeOfCurrentEntry);
+                    if ($previousDateTime instanceof Datetime) {
+                        $differenceInSeconds    = $dateTime->getTimestamp() - $previousDateTime->getTimestamp();
+
+                        if ($lastEntryWasABreakEntry) {
+                            $breakTimeInSeconds += $differenceInSeconds;
+                        } else {
+                            $workTimeInSeconds  += $differenceInSeconds;
+                        }
+
+                        if ($isABreak) {
+                            $lastEntryWasABreakEntry = true;
+                        } else {
+                            $lastEntryWasABreakEntry = false;
+                        }
+                    }
+                    $previousDateTime = $dateTime;
+                }
+            }
+
+            $breakTimeAsString  = $time->formatSecondsIntoHourAndMinutes($breakTimeInSeconds);
+            $workTimeAsString   = $time->formatSecondsIntoHourAndMinutes($workTimeInSeconds);
+
+            $collection->addComment('time spend for break: ' . $breakTimeAsString);
+            $collection->addComment('time spend for work: ' . $workTimeAsString);
         }
 
-        $breakTimeAsString  = $time->formatSecondsIntoHourAndMinutes($breakTimeInSeconds);
-        $workTimeAsString   = $time->formatSecondsIntoHourAndMinutes($workTimeInSeconds);
-
-        $collection->addLine('time spend for break: ' . $breakTimeAsString);
-        $collection->addLine('time spend for work: ' . $workTimeAsString);
         $collection->persist();
 
         $environment->outputIfVerbosityIsEnabled('added content to file:');

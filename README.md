@@ -6,6 +6,7 @@ This component helps you tracking your daily tasks.
 ## History
 
 * @todo
+    * time_registration_list_current_day
     * time_registration_list_last_day
     * time_registration_list_last_week
     * create phar archive
