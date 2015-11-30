@@ -15,6 +15,7 @@ Give it a try by executing *time_registration*.
         * create documentation
         * create hidden json file for each entry ({version: 0, timestamp: 124, subject: "tra la la", description: "tru lu lu", type: [entry|comment]})
         * create install script (path should be /opt/time-registration/)
+    * removed the ".md" suffix since we are not using the markdown syntax
 * [0.1.0](https://github.com/time-registration/local_builder/tree/0.1.0) - released at 29.11.2015
     * initial plumper release
     * create year in data automatically

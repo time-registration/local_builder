@@ -66,7 +66,7 @@ class CollectionOfEntries
      */
     public function setName($name)
     {
-        $this->name = $name . '.md';
+        $this->name = $name;
         $this->loadContentIfPossible();
     }
 
