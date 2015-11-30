@@ -5,10 +5,15 @@ This component helps you tracking your daily tasks.
 
 Give it a try by executing *time_registration*.
 
+# Why?
+
+* 15 minutes is minimum
+
 # History
 
 * upcoming
     * @todo
+        * add --force or --replace|--update 
         * create phar archive
         * create gui tool
         * create shell auto completion by using [this](https://github.com/bazzline/php_component_cli_readline)
