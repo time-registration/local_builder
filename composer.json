@@ -33,7 +33,7 @@
       "bin/time_registration_list_days",
       "bin/time_registration_list_last_week",
       "bin/time_registration_start_a_break",
-      "bin/time_registration_start_the_lunch"
+      "bin/time_registration_start_lunch"
     ],
     "autoload": {
         "psr-0": {

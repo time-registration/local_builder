@@ -45,9 +45,9 @@ $environment->execute(
         //begin of business logic
         if ($arguments->hasValues()) {
             $values         = $arguments->getValues();
-            $description    = implode(' ', $values);
+            $description    = 'break ' . implode(' ', $values);
         } else {
-            $description = '';
+            $description = 'break';
         }
 
         $timestamp              = $time->getTimestamp();
@@ -56,7 +56,7 @@ $environment->execute(
 
         $collection->setName($currentCalendarWeek);
         $collection->setYear($time->createYear($timestamp));
-        $collection->addEntry($description, 'break', $timestamp);
+        $collection->addEntry($description, '-', $timestamp);
         $collection->persist();
 
         $environment->outputIfVerbosityIsEnabled('added content to file:');
