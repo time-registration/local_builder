@@ -83,9 +83,10 @@ class CollectionOfEntries
      * @param string $description
      * @param string $subject
      * @param int $timestamp
+     * @param bool $isForced
      * @throws InvalidArgumentException
      */
-    public function addEntry($description, $subject, $timestamp)
+    public function addEntry($description, $subject, $timestamp, $isForced = false)
     {
         $configuration  = $this->configuration;
         $currentDate    = $this->generateCurrentDate($timestamp);
@@ -96,7 +97,7 @@ class CollectionOfEntries
         $timeAsString   = $time->createHourAndMinutesForAnEntry($timestamp);
 
         //begin of argument validation
-        $subjectIsToLong    = (strlen($subject) > $configuration->getFixedCharacterNumberOfSubjectSection());
+        $subjectIsToLong    = (strlen($subject) >= $configuration->getFixedCharacterNumberOfSubjectSection());
 
         if ($subjectIsToLong) {
             throw new InvalidArgumentException(
@@ -130,17 +131,22 @@ class CollectionOfEntries
             $line = $currentDate . PHP_EOL . PHP_EOL . $line;
         } else {
             $lineNumberFromCurrentDate = $filesystem->getLineNumberOfLineInFile($filePath, $currentDate);
-            if ($lineNumberFromCurrentDate !== false) {
-                if ($filesystem->fileContainsLine($filePath, '^' . $timeAsString, $lineNumberFromCurrentDate)) {
-                    throw new RuntimeException(
-                        'entry for current time (' .
-                        trim($timeAsString) .
-                        ') in current date (' .
-                        $currentDate .
-                        ') and current collection (' .
-                        basename($filePath) .
-                        ') already exist'
-                    );
+            if ($isForced) {
+                //@todo make it nice ;-)
+                array_pop($this->content);
+            } else {
+                if ($lineNumberFromCurrentDate !== false) {
+                    if ($filesystem->fileContainsLine($filePath, '^' . $timeAsString, $lineNumberFromCurrentDate)) {
+                        throw new RuntimeException(
+                            'entry for current time (' .
+                            trim($timeAsString) .
+                            ') in current date (' .
+                            $currentDate .
+                            ') and current collection (' .
+                            basename($filePath) .
+                            ') already exist'
+                        );
+                    }
                 }
             }
         }

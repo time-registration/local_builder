@@ -32,14 +32,16 @@ use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
 use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
-$usage          = basename(__FILE__) . ' <subject> <description> [-v|--verbose]';
+$usage          = basename(__FILE__) . ' <subject> <description> [-f|--force] [-n|--now] [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
         //begin of dependencies
         $arguments  = $environment->getArguments();
+        $isForced   = ($arguments->hasFlag('f') || $arguments->hasFlag('force'));
         $locator    = new ApplicationLocator();
         $time       = $locator->getTime();
+        $useNow     = ($arguments->hasFlag('n') || $arguments->hasFlag('now'));
         $values     = $arguments->getValues();
         //end of dependencies
 
@@ -59,12 +61,17 @@ $environment->execute(
         //begin of business logic
         //@todo check if day has not finished yet
         $timestamp              = $time->getTimestamp();
+
+        if ($useNow) {
+            $timestamp = $time->roundDown($timestamp);
+        }
+
         $collection             = $locator->getCollectionOfEntries();
         $currentCalendarWeek    = $time->createCalendarWeek($timestamp);
 
         $collection->setName($currentCalendarWeek);
         $collection->setYear($time->createYear($timestamp));
-        $collection->addEntry($description, $subject, $timestamp);
+        $collection->addEntry($description, $subject, $timestamp, $isForced);
         $collection->persist();
 
         $environment->outputIfVerbosityIsEnabled('added content to file:');

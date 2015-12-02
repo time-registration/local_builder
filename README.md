@@ -13,13 +13,14 @@ Give it a try by executing *time_registration*.
 
 * upcoming
     * @todo
-        * add --force or --replace|--update 
         * create phar archive
         * create gui tool
         * create shell auto completion by using [this](https://github.com/bazzline/php_component_cli_readline)
         * create documentation
         * create hidden json file for each entry ({version: 0, timestamp: 124, subject: "tra la la", description: "tru lu lu", type: [entry|comment]})
         * create install script (path should be /opt/time-registration/)
+* [0.1.2](https://github.com/time-registration/local_builder/tree/0.1.2) - released at 02.12.2015
+    * added "-f|--force" and "-n|--now" to time_registration_start to force (overwriting) an existing time or to round down the current time (by using now)
     * renamed time_registration_create_an_entry to time_registration_start
     * shifted "lunch" and "pause" into description
 * [0.1.1](https://github.com/time-registration/local_builder/tree/0.1.1) - released at 02.12.2015

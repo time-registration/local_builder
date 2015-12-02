@@ -120,4 +120,21 @@ class Time
 
         return $this->timestamp;
     }
+
+    /**
+     * @param int $timestamp
+     * @return int
+     */
+    public function roundDown($timestamp)
+    {
+        $hour               = date('H', $timestamp);
+        $minutes            = date('i', $timestamp);
+        $minutesAsSeconds   = $minutes * 60;
+        $rounded            = ($minutes - ($minutes % 15));
+        $roundedAsSeconds   = $rounded * 60;
+
+        $roundedTimestamp   = $timestamp - $minutesAsSeconds + $roundedAsSeconds;
+
+        return $roundedTimestamp;
+    }
 }
