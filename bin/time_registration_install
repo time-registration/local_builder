@@ -75,6 +75,10 @@ $environment->execute(
  */
 
 return array(
+    \'common_tasks\'                                => array(
+        \'break\',
+        \'lunch\'
+    ),
     \'fixed_character_number_of_subject_section\'   => 8,
     \'path_to_store_the_data\'                      => __DIR__ . \'/../data\',
     \'prefix_for_current_day\'                      => \'_\',

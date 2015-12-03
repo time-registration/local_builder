@@ -23,7 +23,7 @@
     ],
     "bin": [
       "bin/time_registration",
-      "bin/time_registration_create_configuration_file",
+      "bin/time_registration_install",
       "bin/time_registration_finish_the_day",
       "bin/time_registration_finish_the_day_with_holiday",
       "bin/time_registration_finish_the_day_with_illness",
