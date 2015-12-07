@@ -19,6 +19,7 @@ Give it a try by executing *time_registration*.
         * create documentation
         * create hidden json file for each entry ({version: 0, timestamp: 124, subject: "tra la la", description: "tru lu lu", type: [entry|comment]})
         * create install script (path should be /opt/time-registration/)
+        * add "--time=hh:mm" to all creation scripts
     * renamed time_registration_create_configuration_file to time_registration_install
 * [0.1.2](https://github.com/time-registration/local_builder/tree/0.1.2) - released at 02.12.2015
     * added "-f|--force" and "-n|--now" to time_registration_start to force (overwriting) an existing time or to round down the current time (by using now)
