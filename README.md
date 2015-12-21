@@ -8,6 +8,7 @@ Give it a try by executing *time_registration*.
 # Why?
 
 * 15 minutes is minimum
+    * doing a more accurate tracking just adds stress and management overhead
 
 # History
 

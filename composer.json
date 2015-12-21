@@ -5,12 +5,13 @@
     "type": "project",
     "require": {
         "net_bazzline/php_component_cli_environment": "0.1.2",
-        "net_bazzline/php_component_locator_generator": "2.0.7",
+        "net_bazzline/php_component_command": "1.2.0",
+        "net_bazzline/php_component_locator_generator": "2.0.8",
         "php": ">=5.3.3"
     },
     "require-dev": {
         "mikey179/vfsstream": "1.6.0",
-        "phpunit/phpunit": ">=4.8.16"
+        "phpunit/phpunit": "~4.8||~5.1"
     },
     "license": "GPLv3",
     "authors": [
@@ -37,8 +38,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "Net\\Bazzline\\TimeRegistration\\LocalBuilder": "source/",
-            "Test\\Net\\Bazzline\\TimeRegistration\\LocalBuilder": "test/"
+            "Net\\Bazzline\\TimeRegistration\\LocalBuilder": "source/"
         }
     }
 }
