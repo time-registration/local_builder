@@ -22,6 +22,7 @@ Give it a try by executing *time_registration*.
         * create install script (path should be /opt/time-registration/)
         * add "--time=hh:mm" to all creation scripts
         * add "--raw" to all time_registration_list_days scripts (output with comments)
+    * refactored commandy by centralizing logic
     * renamed time_registration_create_configuration_file to time_registration_install
 * [0.1.2](https://github.com/time-registration/local_builder/tree/0.1.2) - released at 02.12.2015
     * added "-f|--force" and "-n|--now" to time_registration_start to force (overwriting) an existing time or to round down the current time (by using now)
