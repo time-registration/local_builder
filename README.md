@@ -14,14 +14,15 @@ Give it a try by executing *time_registration*.
 
 * upcoming
     * @todo
+        * add "--time=hh:mm" to all creation scripts
+        * add "--raw" to all time_registration_list_days scripts (output with comments)
         * create phar archive
         * create gui tool
         * create shell auto completion by using [this](https://github.com/bazzline/php_component_cli_readline)
         * create documentation
         * create hidden json file for each entry ({version: 0, timestamp: 124, subject: "tra la la", description: "tru lu lu", type: [entry|comment]})
         * create install script (path should be /opt/time-registration/)
-        * add "--time=hh:mm" to all creation scripts
-        * add "--raw" to all time_registration_list_days scripts (output with comments)
+        * remove short flags like "-f"
     * refactored commandy by centralizing logic
     * renamed time_registration_create_configuration_file to time_registration_install
 * [0.1.2](https://github.com/time-registration/local_builder/tree/0.1.2) - released at 02.12.2015
