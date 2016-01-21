@@ -36,7 +36,7 @@ $usage			= basename(__FILE__) . ' [-v|--verbose]';
 $environment->execute(
     function (CommandLineEnvironment $environment) {
         //begin of business logic
-        $command = __DIR__ . '/time_registration_finish_the_day holiday';
+        $command = __DIR__ . '/finish_the_day holiday';
 
         if ($environment->beVerbose()) {
             $command .= ' -v';
