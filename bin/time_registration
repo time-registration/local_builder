@@ -78,7 +78,7 @@ $environment->execute(
             },
             $arguments
         );
-        $commandToExecute   = __DIR__ . '/time_registration_' .
+        $commandToExecute   = __DIR__ . '/' .
             $command .
             ' ' . implode(' ', $arguments);
         passthru($commandToExecute);
