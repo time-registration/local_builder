@@ -127,7 +127,6 @@ class Time
      */
     public function roundDown($timestamp)
     {
-        $hour               = date('H', $timestamp);
         $minutes            = date('i', $timestamp);
         $minutesAsSeconds   = $minutes * 60;
         $rounded            = ($minutes - ($minutes % 15));
