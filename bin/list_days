@@ -32,7 +32,7 @@ use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
 use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
-$usage			= basename(__FILE__) . ' <date of the newest entry - yyyy-mm-dd> <number of days in the past> [-v|--verbose]';
+$usage			= basename(__FILE__) . ' <number of days in the past> [<date of the newest entry - yyyy-mm-dd>] [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
@@ -46,15 +46,17 @@ $environment->execute(
 
         //begin of validation
         $numberOfValues = count($values);
-        if ($numberOfValues < 2) {
+        if ($numberOfValues < 1) {
             throw new InvalidArgumentException(
                 'invalid number of arguments supplied'
             );
         }
 
         //@todo implement validation to see if it is a valid date
-        $dateOfTheNewestEntry   = $values[0];
-        $numberOfDaysInThePast  = (int) $values[1];
+        $dateOfTheNewestEntry   = ($numberOfValues > 1)
+            ? $values[1]
+            : date('Y-m-d');
+        $numberOfDaysInThePast  = (int) $values[0];
         //end of validation
 
         //begin of business logic
