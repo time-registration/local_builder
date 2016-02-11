@@ -1,0 +1,125 @@
+#!/bin/env php
+<?php
+/**
+ * @author net_bazzline_create_executable_command_line_file
+ * @since 2016-11-26
+ */
+
+//begin of including composer autoload.php
+$possiblePathsToComposerAutoloadFile = array(
+    __DIR__ . '/../../../autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+    __DIR__ . '/../vendor/autoload.php'
+);
+
+$pathToAutoloadFileNotFound = true;
+$pathToAutoloadFile         = null;
+
+foreach ($possiblePathsToComposerAutoloadFile as $path) {
+    if (file_exists($path)) {
+        $pathToAutoloadFile         = $path;
+        $pathToAutoloadFileNotFound = false;
+        break;
+    }
+}
+if ($pathToAutoloadFileNotFound) {
+    echo 'could not find composer autoload.php, no composer installed?' . PHP_EOL;
+    exit(1);
+}
+
+require_once $pathToAutoloadFile;
+//end of including composer autoload.php
+
+use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
+
+$environment    = new CommandLineEnvironment($argv);
+$usage			= basename(__FILE__) . ' [<number of days in the past>] [-v|--verbose]';
+
+$environment->execute(
+    function (CommandLineEnvironment $environment) {
+        //begin of dependencies
+        $arguments  = $environment->getArguments();
+        $locator    = new ApplicationLocator();
+        $text       = $environment->getText();
+        $time       = $locator->getTime();
+        $values     = $arguments->getValues();
+        //end of dependencies
+
+        //begin of validation
+        $numberOfDaysInThePast  = isset($values[0])
+            ? (int) $values[0]
+            : 7;
+        //end of validation
+
+        //begin of business logic
+        $dateOfTheNewestEntry   = date('Y-m-d');
+        $firstDateTime          = new DateTime($dateOfTheNewestEntry);
+        $firstDateTime          = $firstDateTime->sub(
+            new DateInterval(
+                'P1D'
+            )
+        );
+        $lastDateTime           = new DateTime($dateOfTheNewestEntry);
+        $lastDateTime           = $lastDateTime->sub(
+            new DateInterval(
+                'P' . $numberOfDaysInThePast . 'D'
+            )
+        );
+
+        $calendarWeeks      = array();
+        $firstCalendarWeek  = $time->createCalendarWeek($firstDateTime->getTimestamp());
+        $lastCalendarWeek   = $time->createCalendarWeek($lastDateTime->getTimestamp());
+        $calendarWeek       = $firstCalendarWeek;
+
+        if ($firstCalendarWeek === $lastCalendarWeek) {
+            $calendarWeeks[] = $firstCalendarWeek;
+        } else {
+            while ($calendarWeek > $lastCalendarWeek) {
+                $calendarWeeks[] = $calendarWeek;
+                --$calendarWeek;
+            }
+            $calendarWeeks = array_reverse($calendarWeeks);
+        }
+
+        foreach ($calendarWeeks as $calendarWeek) {
+            $environment->output('calendar week: ' . $calendarWeek);
+            $environment->output('');
+            $currentCalendarWeek = $time->createCalendarWeek($lastDateTime->getTimestamp());
+
+            //@todo here is a lot of optimization potential
+            while ($currentCalendarWeek <= $calendarWeek) {
+                if ($lastDateTime->getTimestamp() <= $firstDateTime->getTimestamp()) {
+                    $collection = $locator->getCollectionOfEntries();
+                    $collection->setName($currentCalendarWeek);
+                    $collection->setYear($time->createYear($lastDateTime->getTimestamp()));
+
+                    if ($collection->exists()) {
+                        $entries = $collection->getEntries($lastDateTime->getTimestamp());
+
+                        if (empty($entries)) {
+                            $environment->outputIfVerbosityIsEnabled(
+                                'no entries found for date ' .
+                                $lastDateTime->format('Y-m-d')
+                            );
+                        } else {
+                            $environment->output($lastDateTime->format('Y-m-d'));
+                            foreach ($entries as $entry) {
+                                $isNotAComment = (!$text->startsWith($entry, '#'));
+                                if ($isNotAComment) {
+                                    $environment->output($entry);
+                                }
+                            }
+                            $environment->output('');
+                        }
+                    }
+                }
+
+                $lastDateTime->add(new DateInterval('P1D'));
+                $currentCalendarWeek = $time->createCalendarWeek($lastDateTime->getTimestamp());
+            }
+        }
+        //end of business logic
+    },
+    $usage
+);
