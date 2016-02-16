@@ -14,11 +14,17 @@ class Time
 
     /**
      * @param string $timestamp
-     * @return int
+     * @return int|string
      */
     public function createCalendarWeek($timestamp)
     {
-        return (int) date('W', $timestamp);
+        $calendarWeek = (int) date('W', $timestamp);
+
+        if ($calendarWeek < 10) {
+            $calendarWeek = '0' . $calendarWeek;
+        }
+
+        return $calendarWeek;
     }
 
     /**
