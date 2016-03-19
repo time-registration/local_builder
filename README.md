@@ -14,7 +14,7 @@ Give it a try by executing *time_registration*.
 
 * upcoming
     * @todo
-        * add "--time=hh:mm" to all creation scripts
+        * create a script called "started" with the mandatory argument "--at=hh:mm"
         * add "--raw" to all time_registration_list_days scripts (output with comments)
         * create phar archive
         * create gui tool
