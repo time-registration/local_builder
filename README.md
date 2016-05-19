@@ -15,8 +15,10 @@ Give it a try by executing *time_registration*.
 * upcoming
     * @todo
         * add option to set a "subject prefix"
+        * create a script called "started" with the mandatory argument "--at=hh:mm"
         * add "--time=hh:mm" to all creation scripts
         * add "--raw" to all time_registration_list_days scripts (output with comments)
+        * add "configure" beside "install"
         * create phar archive
         * create gui tool
         * create shell auto completion by using [this](https://github.com/bazzline/php_component_cli_readline)
@@ -26,6 +28,8 @@ Give it a try by executing *time_registration*.
         * remove short flags like "-f"
     * refactored commandy by centralizing logic
     * renamed time_registration_create_configuration_file to time_registration_install
+    * renamed "start" to "start_with"
+    * renamed "start_a_\*" to "take_a_\*"
 * [0.1.2](https://github.com/time-registration/local_builder/tree/0.1.2) - released at 02.12.2015
     * added "-f|--force" and "-n|--now" to time_registration_start to force (overwriting) an existing time or to round down the current time (by using now)
     * renamed time_registration_create_an_entry to time_registration_start
