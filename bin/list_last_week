@@ -45,7 +45,7 @@ $environment->execute(
         //end of dependencies
 
         //begin of business logic
-        $command = __DIR__ . '/list_days ' . $time->createDate($dateTime->getTimestamp()) . ' 7';
+        $command = __DIR__ . '/list_days 7 ' . $time->createDate($dateTime->getTimestamp());
 
         if ($environment->beVerbose()) {
             $command .= ' -v';
