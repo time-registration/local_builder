@@ -15,6 +15,7 @@ Give it a try by executing *time_registration*.
 * upcoming
     * @todo
         * add option to set a "subject prefix"
+        * add option to set a default worktime per day (to calculate overhours)
         * add "edit current week"
         * add "--time=hh:mm" to all creation scripts
         * add "--raw" to all time_registration_list_days scripts (output with comments)
