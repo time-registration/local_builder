@@ -116,6 +116,22 @@ class Time
     }
 
     /**
+     * @return int|string
+     */
+    public function getCurrentCalendarWeek()
+    {
+        return $this->createCalendarWeek($this->getTimestamp());
+    }
+
+    /**
+     * @return int
+     */
+    public function getCurrentYear()
+    {
+        return date('Y', $this->getTimestamp());
+    }
+
+    /**
      * @return int
      */
     public function getTimestamp()
