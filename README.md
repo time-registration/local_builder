@@ -16,7 +16,7 @@ Give it a try by executing *time_registration*.
     * @todo
         * add option to set a "subject prefix"
         * add option to set a default worktime per day (to calculate overhours)
-        * add "edit current week"
+        * add option to set a editor for editing the file
         * add "--time=hh:mm" to all creation scripts
         * add "--raw" to all time_registration_list_days scripts (output with comments)
         * add "configure" beside "install"
@@ -29,6 +29,7 @@ Give it a try by executing *time_registration*.
         * create install script (path should be /opt/time-registration/)
         * move configuration files into ".config/time-registration"
         * remove short flags like "-f"
+    * added "edit_current_week"
     * added "start_without_subject"
 * [0.1.3](https://github.com/time-registration/local_builder/tree/0.1.2) - released at 02.12.2015
     * fixed a bug in "list_current_day"

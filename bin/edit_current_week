@@ -1,0 +1,60 @@
+#!/bin/env php
+<?php
+/**
+ * @author net_bazzline_create_executable_command_line_file
+ * @since 2016-06-13
+ */
+
+//begin of including composer autoload.php
+$possiblePathsToComposerAutoloadFile = array(
+    __DIR__ . '/../../../autoload.php',
+    __DIR__ . '/../../vendor/autoload.php',
+    __DIR__ . '/../vendor/autoload.php'
+);
+$pathToAutoloadFileNotFound = true;
+$pathToAutoloadFile         = null;
+foreach ($possiblePathsToComposerAutoloadFile as $path) {
+    if (file_exists($path)) {
+        $pathToAutoloadFile         = $path;
+        $pathToAutoloadFileNotFound = false;
+        break;
+    }
+}
+if ($pathToAutoloadFileNotFound) {
+    echo 'could not find composer autoload.php, no composer installed?' . PHP_EOL;
+    exit(1);
+}
+
+require_once $pathToAutoloadFile;
+//end of including composer autoload.php
+
+use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
+use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
+
+$environment    = new CommandLineEnvironment($argv);
+$usage			= basename(__FILE__) . ' [-v|--verbose]';
+
+$environment->execute(
+    function (CommandLineEnvironment $environment) {
+        //begin of dependencies
+        $locator        = new ApplicationLocator();
+        $configuration  = $locator->getConfiguration();
+        $time           = $locator->getTime();
+        //end of dependencies
+
+        //begin of runtime environments
+        $currentCalendarWeek    = $time->getCurrentCalendarWeek();
+        $currentYear            = $time->getCurrentYear();
+        $editor                 = '/usr/bin/env vim'
+        $pathToStoreTheData     = $configuration->getPathToStoreTheData();
+        $pathToTheCurrentFile   = $pathToStoreTheData . DIRECTORY_SEPARATOR . $currentYear . DIRECTORY_SEPARATOR . $currentCalendarWeek;
+        //end of runtime environments
+
+        //begin of business logic
+        $command = $editor . ' ' . $pathToTheCurrentFile;
+
+        passthru($command);
+        //end of business logic
+    },
+    $usage
+);
