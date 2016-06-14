@@ -45,7 +45,7 @@ $environment->execute(
         //begin of runtime environments
         $currentCalendarWeek    = $time->getCurrentCalendarWeek();
         $currentYear            = $time->getCurrentYear();
-        $editor                 = '/usr/bin/env vim'
+        $editor                 = '/usr/bin/env vim';
         $pathToStoreTheData     = $configuration->getPathToStoreTheData();
         $pathToTheCurrentFile   = $pathToStoreTheData . DIRECTORY_SEPARATOR . $currentYear . DIRECTORY_SEPARATOR . $currentCalendarWeek;
         //end of runtime environments
