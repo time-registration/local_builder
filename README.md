@@ -14,6 +14,7 @@ Give it a try by executing *time_registration*.
 
 * upcoming
     * @todo
+        * add "vim +/<current date>" to quickly edit current day if you call edit_current_week
         * add option to set a "subject prefix"
         * add option to set a default worktime per day (to calculate overhours)
         * add option to set a editor for editing the file
