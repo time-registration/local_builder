@@ -48,9 +48,12 @@ $environment->execute(
         $editor                 = '/usr/bin/env vim';
         $pathToStoreTheData     = $configuration->getPathToStoreTheData();
         $pathToTheCurrentFile   = $pathToStoreTheData . DIRECTORY_SEPARATOR . $currentYear . DIRECTORY_SEPARATOR . $currentCalendarWeek;
+        $timestamp              = $time->getTimestamp();
+        $currentDate            = date('ymd', $timestamp);  //@todo move this into the time class. it is shitty that this file needs to know how the collection of entries is formatting the date
         //end of runtime environments
 
         //begin of business logic
+        $editor .= ' +/' . $currentDate;
         $command = $editor . ' ' . $pathToTheCurrentFile;
 
         passthru($command);

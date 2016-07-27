@@ -14,7 +14,6 @@ Give it a try by executing *time_registration*.
 
 * upcoming
     * @todo
-        * add "vim +/<current date>" to quickly edit current day if you call edit_current_week
         * add option to set a "subject prefix"
         * add option to set a default worktime per day (to calculate overhours)
         * add option to set a editor for editing the file
@@ -31,6 +30,8 @@ Give it a try by executing *time_registration*.
         * create install script (path should be /opt/time-registration/)
         * move configuration files into ".config/time-registration"
         * remove short flags like "-f"
+* [0.2.0](https://github.com/time-registration/local_builder/tree/0.2.0) - released at 27.07.2017
+    * add "vim +/<current date>" to quickly edit current day if you call edit_current_week
     * added "edit_current_week"
     * added "start_without_subject"
 * [0.1.3](https://github.com/time-registration/local_builder/tree/0.1.2) - released at 02.12.2015
