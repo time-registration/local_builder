@@ -22,6 +22,10 @@ Give it a try by executing *time_registration*.
         * add "configure" beside "install"
         * create a script called "resume_last_task" or "continue_with_last_task"
         * create a script called "started" with the mandatory argument "--at=hh:mm"
+        * create a script called "record_days_of_holiday" with mandatory arguments "--from-date=dd[.mm[.yyyy]]" and "--to-date=dd[.mm[.yyyy]]"
+        * create a script called "record_day_of_holiday" with mandatory argument "--date=dd[.mm[.yyyy]]"
+        * create a script called "record_days_of_illness" with mandatory arguments "--from-date=dd[.mm[.yyyy]]" and "--to-date=dd[.mm[.yyyy]]"
+        * create a script called "record_day_of_illness" with mandatory argument "--date=dd[.mm[.yyyy]]"
         * create phar archive
         * create gui tool
         * create shell auto completion by using [this](https://github.com/bazzline/php_component_cli_readline)
