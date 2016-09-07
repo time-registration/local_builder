@@ -1,0 +1,170 @@
+#!/bin/bash
+####
+# @author stev leibelt <artodeto@bazzline.net>
+# @since 2016-09-07
+####
+
+declare -a LIST_OF_AVAILABLE_TASKS=("edit_current_week" "finish_the_day_with_holiday" "list_days" "list_last_days" "start_with" "take_a_break" "finish_the_day" "finish_the_day_with_illness" "list_current_day" "list_last_day" "list_last_week" "start_without_a_subject" "take_a_lunch_break")
+declare -i STOP_THIS_SCRIPT=0
+declare -i CURRENT_STEP=-1
+
+function add_an_entry ()
+{
+    local LEAVE_THIS_FUNCTION=0
+    local CURRENT_TASK_ID=0
+    local LAST_TASK_ID=0
+    local LAST_TASK_DESCRIPTION=""
+    local LAST_TASK_SUBJECT=""
+
+    #while [[ ${LEAVE_THIS_FUNCTION} -lt 1 ]];
+    while (( LEAVE_THIS_FUNCTION == 0 ));
+    do
+        echo ":: What kind of entry do you want to add? (0 is default)"
+
+        if [[ ${LAST_TASK_ID} -eq 0 ]];
+        then
+            echo "   1) start with a subject   2) start without a subject   3) take a lunch break   4) take a break   0) go back to main menu"
+        else
+            echo "   1) start with a subject   2) start without a subject   3) take a lunch break   4) take a break   5) continue with last task   0) go back to main menu"
+        fi
+        read -p "   " CURRENT_TASK_ID
+
+        case ${CURRENT_TASK_ID} in
+            1)
+                echo ":: Please input your subject"
+                read -p "   " SUBJECT
+                echo ""
+                echo ":: Please input your description"
+                read -p "   " DESCRIPTION
+
+                LAST_TASK_ID=${CURRENT_TASK_ID}
+                LAST_TASK_DESCRIPTION="${DESCRIPTION}"
+                LAST_TASK_SUBJECT="${SUBJECT}"
+
+                ./start_with ${SUBJECT} ${DESCRIPTION}
+                ;;
+            2)
+                echo ":: Please input your description"
+                read -p "   " DESCRIPTION
+
+                LAST_TASK_ID=${CURRENT_TASK_ID}
+                LAST_TASK_DESCRIPTION="${DESCRIPTION}"
+                LAST_TASK_SUBJECT=""
+
+                echo "   Starting with ${DESCRIPTION}"
+
+                ./start_without_a_subject ${DESCRIPTION}
+                ;;
+            3)
+                ./take_a_lunch_break
+                ;;
+            4)
+                echo ":: Please input your description"
+                read -p "   " DESCRIPTION
+
+                ./take_a_break ${DESCRIPTION}
+                ;;
+            5)
+                case ${LAST_TASK_ID} in
+                    1)
+                        echo "   Continuing with ${LAST_TASK_SUBJECT} and ${LAST_TASK_DESCRIPTION}"
+                        ./start_with ${LAST_TASK_SUBJECT} ${LAST_TASK_DESCRIPTION}
+                        LAST_TASK_ID=0
+                        LAST_TASK_DESCRIPTION=""
+                        LAST_TASK_SUBJECT=""
+                        ;;
+                    2)
+                        echo "   Continuing with ${LAST_TASK_DESCRIPTION}"
+                        ./start_without_a_subject ${LAST_TASK_DESCRIPTION}
+                        ;;
+                    *)
+                        echo ":: Failure"
+                        echo "   Nothing available to continue with."
+                esac
+
+                LAST_TASK_ID=0
+                LAST_TASK_DESCRIPTION=""
+                LAST_TASK_SUBJECT=""
+                ;;
+            *)
+                LEAVE_THIS_FUNCTION=1
+                break;;
+        esac
+    done
+}
+
+function finish_the_day ()
+{
+    echo "finish the day"
+}
+
+function display_entries ()
+{
+    echo "display entries"
+}
+
+function edit_current_week ()
+{
+    echo "edit current week"
+}
+
+while true;
+do
+    ####
+    # workflow
+    #
+    # @todo
+    #   implement a way like the insert mode in vi to always getting asked for the same "add entry questions" until you have choosen to do something else.
+    ####
+    #>do you want to add an entry to the current day?
+    #   if yes
+    #       >what kind of entry to do you want to add? (0 is default)
+    #       0) start_with   1) start_without_a_subject   2) take_a_lunch_break   3) take_a_break   9)
+    #
+    #       depend on the selection, ask for additional arguments
+    #   if no
+    #>do you want to finish the day?
+    #   if yes
+    #       >how do you want to finish the day? (0 is default)
+    #       0) finish_the_day   1) finish_the_day_with_illness   2) finish_the_day_with_holiday
+    #   if no
+    #>do you want to display entries?
+    #   if yes
+    #       >how do you want to display entries? (0 is default)
+    #       0) list_last_week   1) list_last_day   2) list_current_day   3) list_last_week
+    #
+    #       depend on the selection, ask for additional arguments
+    #   if no
+    #>do you want to edit the current week? (n is default)
+    #   if yes
+    #       call edit_current_week
+    #   if no
+    #>do you want to stop this programm? (n is default)
+    #   if yes
+    #       ${STOP_THIS_SCRIPT} = 1
+    #   if no
+    #       restart questions
+    ####
+
+    case ${CURRENT_STEP} in
+        0)
+            add_an_entry
+            ;;
+        1)
+            finish_the_day
+            ;;
+        2)
+            display_entries
+            ;;
+        3)
+            edit_current_week
+            ;;
+        4)
+            exit 0;
+            ;;
+        *)
+            echo ":: What do you want to do? (0 is default)"
+            echo "   0) add an entry   1) finish the day   2) display entries   3) edit current week   4) exit the programm"
+            read -p "   " CURRENT_STEP
+    esac
+done
