@@ -34,6 +34,8 @@ Give it a try by executing *time_registration*.
         * create install script (path should be /opt/time-registration/)
         * move configuration files into ".config/time-registration"
         * remove short flags like "-f"
+    * refactored `time_registration` and replaced existing code with a bash script you can run for ever
+    * added support for continue a task via the new `time_registration`
 * [0.2.0](https://github.com/time-registration/local_builder/tree/0.2.0) - released at 27.07.2017
     * add "vim +/<current date>" to quickly edit current day if you call edit_current_week
     * added "edit_current_week"

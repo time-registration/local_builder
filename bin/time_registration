@@ -1,0 +1,216 @@
+#!/bin/bash
+####
+# @author stev leibelt <artodeto@bazzline.net>
+# @since 2016-09-07
+####
+
+declare -i GLOBAL_CURRENT_STEP=-1
+
+function add_an_entry ()
+{
+    local CURRENT_TASK_ID=0
+    local LAST_TASK_ID=0
+    local LAST_TASK_DESCRIPTION=""
+    local LAST_TASK_SUBJECT=""
+
+    while :
+    do
+        echo ":: What kind of entry do you want to add? (0 is default)"
+
+        if [[ ${LAST_TASK_ID} -eq 0 ]];
+        then
+            echo "   1) With a subject   2) Without a subject   3) Take a lunch break   4) Take a break   *) Go back to main menu"
+        else
+            echo "   1) With a subject   2) Without a subject   3) Take a lunch break   4) Take a break   5) Continue with last entry   *) Go back to main menu"
+        fi
+        read -p "   " CURRENT_TASK_ID
+
+        case ${CURRENT_TASK_ID} in
+            1)
+                echo ":: Please input your subject."
+                read -p "   " SUBJECT
+                echo ""
+                echo ":: Please input your description."
+                read -p "   " DESCRIPTION
+                echo ":: Have you started this task right now or a bit earlier? (y|n) (n is default)"
+
+                echo "   Starting with ${SUBJECT} - ${DESCRIPTION}"
+                read -p "   " NOW
+
+                LAST_TASK_ID=${CURRENT_TASK_ID}
+                LAST_TASK_DESCRIPTION="${DESCRIPTION}"
+                LAST_TASK_SUBJECT="${SUBJECT}"
+
+                if [[ ${NOW} == "y" ]];
+                then
+                    ./start_with ${SUBJECT} ${DESCRIPTION} --now
+                else
+                    ./start_with ${SUBJECT} ${DESCRIPTION}
+                fi
+                ;;
+            2)
+                echo ":: Please input your description"
+                read -p "   " DESCRIPTION
+                echo ":: Have you started this task right now or a bit earlier? (y|n) (n is default)"
+                read -p "   " NOW
+
+                LAST_TASK_ID=${CURRENT_TASK_ID}
+                LAST_TASK_DESCRIPTION="${DESCRIPTION}"
+                LAST_TASK_SUBJECT=""
+
+                echo "   Starting with ${DESCRIPTION}"
+
+                if [[ ${NOW} == "y" ]];
+                then
+                    ./start_without_a_subject ${DESCRIPTION} --now
+                else
+                    ./start_without_a_subject ${DESCRIPTION}
+                fi
+                ;;
+            3)
+                ./take_a_lunch_break
+                ;;
+            4)
+                echo ":: Please input your description"
+                read -p "   " DESCRIPTION
+
+                ./take_a_break ${DESCRIPTION}
+                ;;
+            5)
+                case ${LAST_TASK_ID} in
+                    1)
+                        echo "   Continuing with ${LAST_TASK_SUBJECT} and ${LAST_TASK_DESCRIPTION}"
+                        ./start_with ${LAST_TASK_SUBJECT} ${LAST_TASK_DESCRIPTION}
+                        LAST_TASK_ID=0
+                        LAST_TASK_DESCRIPTION=""
+                        LAST_TASK_SUBJECT=""
+                        ;;
+                    2)
+                        echo "   Continuing with ${LAST_TASK_DESCRIPTION}"
+                        ./start_without_a_subject ${LAST_TASK_DESCRIPTION}
+                        ;;
+                    *)
+                        echo ":: Failure"
+                        echo "   Nothing available to continue with."
+                esac
+
+                LAST_TASK_ID=0
+                LAST_TASK_DESCRIPTION=""
+                LAST_TASK_SUBJECT=""
+                ;;
+            *)
+                GLOBAL_CURRENT_STEP=-1
+                break
+                ;;
+        esac
+    done
+}
+
+function finish_the_day ()
+{
+    local CURRENT_TASK_ID=0
+
+    echo ":: How do you want to finish the day? (0 is default)"
+    echo "   1)   Leaving Work   2)   With illness   3)   With holiday   *) Go back to main menu"
+
+    read -p "   " CURRENT_TASK_ID
+
+    case ${CURRENT_TASK_ID} in
+        1)
+            ./finish_the_day
+            ;;
+        2)
+            ./finish_the_day_with_illness
+            ;;
+        3)
+            ./finish_the_day_with_holiday
+            ;;
+        *)
+            ;;
+    esac
+
+    GLOBAL_CURRENT_STEP=-1
+}
+
+function display_entries ()
+{
+    local CURRENT_TASK_ID=0
+
+    echo ":: How do you want to list the entries?"
+    echo "   1) Last week   2) Last day   3) Current day   4) Last days   *) Go back to main menu"
+    read -p "   " CURRENT_TASK_ID
+
+    case ${CURRENT_TASK_ID} in
+        1)
+            ./list_last_week
+            ;;
+        2)
+            ./list_last_day
+            ;;
+        3)
+            ./list_current_day
+            ;;
+        4)
+            ./list_last_days
+            ;;
+        5)
+            echo ":: How many days do you want to display from the past?"
+            read -p "   " NUMBER_OF_DAYS_TO_LIST
+            ./list_last_days ${NUMBER_OF_DAYS_TO_LIST}
+            ;;
+        *)
+            GLOBAL_CURRENT_STEP=-1
+            ;;
+    esac
+}
+
+function edit_current_week ()
+{
+    ./edit_current_week
+    GLOBAL_CURRENT_STEP=-1
+}
+
+#begin of main
+while true;
+do
+    case ${GLOBAL_CURRENT_STEP} in
+        0)
+            printf "\e[31m"
+            echo ":: Exit ::"
+            printf "\e[0m"
+            exit 0;
+            ;;
+        1)
+            printf "\e[32m"
+            echo ":: Add an entry ::"
+            printf "\e[0m"
+            add_an_entry
+            ;;
+        2)
+            printf "\e[32m"
+            echo ":: Finish the day ::"
+            printf "\e[0m"
+            finish_the_day
+            ;;
+        3)
+            printf "\e[32m"
+            echo ":: List entries ::"
+            printf "\e[0m"
+            display_entries
+            ;;
+        4)
+            printf "\e[32m"
+            echo ":: Edit current week ::"
+            printf "\e[0m"
+            edit_current_week
+            ;;
+        *)
+            printf "\e[33m"
+            echo ":: Main Menu ::"
+            printf "\e[0m"
+            echo ":: What do you want to do? (default is 0)"
+            echo "   1) Add an entry   2) Finish the day   3) List entries   4) Edit current week   *) Exit the programm"
+            read -p "   " GLOBAL_CURRENT_STEP
+    esac
+done
+#end of main
