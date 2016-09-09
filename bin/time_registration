@@ -35,13 +35,13 @@ function add_an_entry ()
                 echo ":: Have you started this task right now or a bit earlier? (y|n) (n is default)"
 
                 echo "   Starting with ${SUBJECT} - ${DESCRIPTION}"
-                read -p "   " NOW
+                read -p "   " START_RIGHT_NOW
 
                 LAST_TASK_ID=${CURRENT_TASK_ID}
                 LAST_TASK_DESCRIPTION="${DESCRIPTION}"
                 LAST_TASK_SUBJECT="${SUBJECT}"
 
-                if [[ ${NOW} == "y" ]];
+                if [[ ${START_RIGHT_NOW} == "y" ]];
                 then
                     ./start_with ${SUBJECT} ${DESCRIPTION} --now
                 else
@@ -52,7 +52,7 @@ function add_an_entry ()
                 echo ":: Please input your description"
                 read -p "   " DESCRIPTION
                 echo ":: Have you started this task right now or a bit earlier? (y|n) (n is default)"
-                read -p "   " NOW
+                read -p "   " START_RIGHT_NOW
 
                 LAST_TASK_ID=${CURRENT_TASK_ID}
                 LAST_TASK_DESCRIPTION="${DESCRIPTION}"
@@ -60,7 +60,7 @@ function add_an_entry ()
 
                 echo "   Starting with ${DESCRIPTION}"
 
-                if [[ ${NOW} == "y" ]];
+                if [[ ${START_RIGHT_NOW} == "y" ]];
                 then
                     ./start_without_a_subject ${DESCRIPTION} --now
                 else
