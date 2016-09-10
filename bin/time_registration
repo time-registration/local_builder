@@ -2,6 +2,18 @@
 ####
 # @author stev leibelt <artodeto@bazzline.net>
 # @since 2016-09-07
+# @todo
+#   change the menu to
+#
+#   Add     Finish  Edit    List    Exit
+#   1       2       3       4       0
+#   With Subject    Without Subject Lunch   Break   Continue    Main Menu
+#   11              12              13      14      15          *
+#   Going Home  Illness     Holiday     Main Menu
+#   21          22          23          *
+#   Current week    Main Menu
+#   31              *
+#   ...
 ####
 
 declare -i GLOBAL_CURRENT_STEP=-1
