@@ -151,9 +151,6 @@ function display_entries ()
             ./list_current_day
             ;;
         4)
-            ./list_last_days
-            ;;
-        5)
             echo ":: How many days do you want to display from the past?"
             read -p "   " NUMBER_OF_DAYS_TO_LIST
             ./list_last_days ${NUMBER_OF_DAYS_TO_LIST}
