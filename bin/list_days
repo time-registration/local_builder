@@ -32,7 +32,7 @@ use Net\Bazzline\Component\Cli\Environment\CommandLineEnvironment;
 use Net\Bazzline\TimeRegistration\LocalBuilder\Utility\ApplicationLocator;
 
 $environment    = new CommandLineEnvironment($argv);
-$usage			= basename(__FILE__) . ' <number of days in the past> [<date of the newest entry - yyyy-mm-dd>] [-v|--verbose]';
+$usage			= basename(__FILE__) . ' <number of days> [<date of the newest entry - yyyy-mm-dd>] [-v|--verbose]';
 
 $environment->execute(
     function (CommandLineEnvironment $environment) {
