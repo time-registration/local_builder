@@ -14,6 +14,9 @@ Give it a try by executing *time_registration*.
 
 * upcoming
     * @todo
+        * add output of "work done today"
+            * either updated on each interaction or each 15 minutes
+            * think about playing with colors (yellow or orange if over configured daily amount of work, red if overdone by 20 % or something)
         * add option to set a "subject prefix"
         * add option to set a default worktime per day (to calculate overhours)
         * add option to set a editor for editing the file
