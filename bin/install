@@ -6,11 +6,11 @@
  */
 
 //begin of including composer autoload.php
-$possiblePathsToComposerAutoloadFile = array(
+$possiblePathsToComposerAutoloadFile = [
     __DIR__ . '/../../../autoload.php',
     __DIR__ . '/../../vendor/autoload.php',
     __DIR__ . '/../vendor/autoload.php'
-);
+];
 $pathToAutoloadFileNotFound = true;
 $pathToAutoloadFile         = null;
 foreach ($possiblePathsToComposerAutoloadFile as $path) {
@@ -74,16 +74,16 @@ $environment->execute(
  * @since ' . $time->createDate($time->getTimestamp()) . '
  */
 
-return array(
-    \'common_tasks\'                                => array(
+return [
+    \'common_tasks\'                                => [
         \'break\',
         \'lunch\'
-    ),
+    ],
     \'fixed_character_number_of_subject_section\'   => 8,
     \'path_to_store_the_data\'                      => __DIR__ . \'/../data\',
     \'prefix_for_current_day\'                      => \'_\',
     \'version\'                                     => ' . Configuration::CURRENT_VERSION . '
-);
+];
 ';
 
             $filesystem->writeFileContentOrThrowRuntimeException($fullQualifiedFilePath, $content);

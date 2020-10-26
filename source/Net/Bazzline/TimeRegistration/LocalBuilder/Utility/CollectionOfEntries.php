@@ -35,9 +35,6 @@ class CollectionOfEntries
     /** @var int */
     private $year;
 
-    /**
-     * @param Configuration $configuration
-     */
     public function injectConfiguration(Configuration $configuration)
     {
         $this->configuration    = $configuration;
@@ -45,48 +42,32 @@ class CollectionOfEntries
         $this->loadContentIfPossible();
     }
 
-    /**
-     * @param Filesystem $filesystem
-     */
     public function injectFilesystem(Filesystem $filesystem)
     {
         $this->filesystem = $filesystem;
     }
 
-    /**
-     * @param Time $time
-     */
     public function injectTime(Time $time)
     {
         $this->time = $time;
     }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
         $this->loadContentIfPossible();
     }
 
-    /**
-     * @param int $year
-     */
-    public function setYear($year)
+    public function setYear(int $year)
     {
         $this->year = $year;
         $this->loadContentIfPossible();
     }
 
     /**
-     * @param string $description
-     * @param string $subject
-     * @param int $timestamp
-     * @param bool $isForced
      * @throws InvalidArgumentException
      */
-    public function addEntry($description, $subject, $timestamp, $isForced = false)
+    public function addEntry(string $description, string $subject, int $timestamp, bool $isForced = false)
     {
         $configuration  = $this->configuration;
         $currentDate    = $this->generateCurrentDate($timestamp);
@@ -155,18 +136,12 @@ class CollectionOfEntries
         $this->addLineToContent($line);
     }
 
-    /**
-     * @param string $line
-     */
-    public function addComment($line)
+    public function addComment(string $line)
     {
         $this->addLineToContent('#' . $line);
     }
 
-    /**
-     * @return bool
-     */
-    public function exists()
+    public function exists(): bool
     {
         $filesystem = $this->filesystem;
         $filePath   = $this->getFilePath();
@@ -174,14 +149,10 @@ class CollectionOfEntries
         return $filesystem->isFileAvailable($filePath);
     }
 
-    /**
-     * @param int $timestamp
-     * @return array
-     */
-    public function getEntries($timestamp)
+    public function getEntries(int $timestamp): array
     {
         $currentDate            = $this->generateCurrentDate($timestamp);
-        $entries                = array();
+        $entries                = [];
         $lineNumberToStartWith  = false;
 
         foreach ($this->content as $lineNumber => $line) {
@@ -213,19 +184,17 @@ class CollectionOfEntries
     }
 
     /**
-     * @return string
      * @todo implement validation and throw exception
      */
-    public function getFilePath()
+    public function getFilePath(): string
     {
         return $this->getPath() . DIRECTORY_SEPARATOR . $this->name;
     }
 
     /**
-     * @return string
      * @todo implement validation and throw exception
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path . DIRECTORY_SEPARATOR . $this->year;
     }
@@ -248,20 +217,13 @@ class CollectionOfEntries
         }
     }
 
-    /**
-     * @param string $line
-     */
-    private function addLineToContent($line)
+    private function addLineToContent(string $line)
     {
         $this->content[]    = trim($line);
         $this->isModified   = true;
     }
 
-    /**
-     * @param string $timestamp
-     * @return string
-     */
-    private function generateCurrentDate($timestamp)
+    private function generateCurrentDate(string $timestamp): string
     {
         $configuration  = $this->configuration;
         $currentDate    = $configuration->getPrefixForCurrentDay() . date('ymd', $timestamp);
@@ -293,7 +255,7 @@ class CollectionOfEntries
                 $this->content      = $content;
                 $this->isModified   = false;
             } else {
-                $this->content      = array();
+                $this->content      = [];
                 $this->isModified   = true;
             }
         }

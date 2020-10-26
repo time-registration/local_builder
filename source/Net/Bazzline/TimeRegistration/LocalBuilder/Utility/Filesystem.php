@@ -98,7 +98,7 @@ class Filesystem
      */
     public function getPathToCurrentUserHome()
     {
-        return trim(shell_exec('echo $HOME'));
+        return getenv('HOME');
     }
 
     /**

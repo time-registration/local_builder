@@ -19,12 +19,12 @@ class ApplicationLocator implements LocatorInterface
     /**
      * @var $factoryInstancePool
      */
-    private $factoryInstancePool = array();
+    private $factoryInstancePool = [];
 
     /**
      * @var $sharedInstancePool
      */
-    private $sharedInstancePool = array();
+    private $sharedInstancePool = [];
 
     /**
      * @return \Net\Bazzline\TimeRegistration\LocalBuilder\Utility\CollectionOfEntries

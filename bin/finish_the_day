@@ -6,11 +6,11 @@
  */
 
 //begin of including composer autoload.php
-$possiblePathsToComposerAutoloadFile = array(
+$possiblePathsToComposerAutoloadFile = [
     __DIR__ . '/../../../autoload.php',
     __DIR__ . '/../../vendor/autoload.php',
     __DIR__ . '/../vendor/autoload.php'
-);
+];
 $pathToAutoloadFileNotFound = true;
 $pathToAutoloadFile         = null;
 foreach ($possiblePathsToComposerAutoloadFile as $path) {
@@ -76,10 +76,10 @@ $environment->execute(
                 if ($looksLikeAValidTime) {
                     $isABreak   = $string->containsOneOf(
                         $entry,
-                        array(
+                        [
                             '  lunch',
                             '  break'
-                        )
+                        ]
                     );
                     $dateTime = new DateTime($timeOfCurrentEntry);
                     if ($previousDateTime instanceof Datetime) {

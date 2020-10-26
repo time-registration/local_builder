@@ -51,6 +51,9 @@ _YYMMDD
 
 ### Changed
 
+* started migrating code to php 7
+* removed deprecated `array();` with `[];`
+
 ## [0.2.0](https://github.com/time-registration/local_builder/tree/0.2.0) - released at 27.07.2017
 
 ### Added
