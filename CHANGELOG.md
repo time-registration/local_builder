@@ -49,10 +49,12 @@ _YYMMDD
 
 ### Added
 
+* added support for windows
+
 ### Changed
 
-* started migrating code to php 7
 * removed deprecated `array();` with `[];`
+* started migrating code to php 7
 
 ## [0.2.0](https://github.com/time-registration/local_builder/tree/0.2.0) - released at 27.07.2017
 

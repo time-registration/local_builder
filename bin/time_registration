@@ -55,9 +55,9 @@ function add_an_entry ()
 
                 if [[ ${START_RIGHT_NOW} == "y" ]];
                 then
-                    ./start_with ${SUBJECT} ${DESCRIPTION} --now
+                    execute_script "start_with ${SUBJECT} ${DESCRIPTION} --now"
                 else
-                    ./start_with ${SUBJECT} ${DESCRIPTION}
+                    execute_script "start_with ${SUBJECT} ${DESCRIPTION}"
                 fi
                 ;;
             2)
@@ -74,32 +74,32 @@ function add_an_entry ()
 
                 if [[ ${START_RIGHT_NOW} == "y" ]];
                 then
-                    ./start_without_a_subject ${DESCRIPTION} --now
+                    execute_script "start_without_a_subject ${DESCRIPTION} --now"
                 else
-                    ./start_without_a_subject ${DESCRIPTION}
+                    execute_script "start_without_a_subject ${DESCRIPTION}"
                 fi
                 ;;
             3)
-                ./take_a_lunch_break
+                execute_script 'take_a_lunch_break'
                 ;;
             4)
                 echo ":: Please input your description"
                 read -p "   " DESCRIPTION
 
-                ./take_a_break ${DESCRIPTION}
+                execute_script "take_a_break ${DESCRIPTION}"
                 ;;
             5)
                 case ${LAST_TASK_ID} in
                     1)
                         echo "   Continuing with ${LAST_TASK_SUBJECT} and ${LAST_TASK_DESCRIPTION}"
-                        ./start_with ${LAST_TASK_SUBJECT} ${LAST_TASK_DESCRIPTION}
+                        execute_script "start_with ${LAST_TASK_SUBJECT} ${LAST_TASK_DESCRIPTION}"
                         LAST_TASK_ID=0
                         LAST_TASK_DESCRIPTION=""
                         LAST_TASK_SUBJECT=""
                         ;;
                     2)
                         echo "   Continuing with ${LAST_TASK_DESCRIPTION}"
-                        ./start_without_a_subject ${LAST_TASK_DESCRIPTION}
+                        execute_script "start_without_a_subject ${LAST_TASK_DESCRIPTION}"
                         ;;
                     *)
                         echo ":: Failure"
@@ -118,6 +118,13 @@ function add_an_entry ()
     done
 }
 
+function execute_script()
+{
+    PATH_OF_THE_CURRENT_SCRIPT_BASH=$(cd $(dirname "${BASH_SOURCE[0]}"); pwd)
+
+    php ${PATH_OF_THE_CURRENT_SCRIPT_BASH}/${1}
+}
+
 function finish_the_day ()
 {
     local CURRENT_TASK_ID=0
@@ -129,13 +136,13 @@ function finish_the_day ()
 
     case ${CURRENT_TASK_ID} in
         1)
-            ./finish_the_day
+            execute_script 'finish_the_day'
             ;;
         2)
-            ./finish_the_day_with_illness
+            execute_script 'finish_the_day_with_illness'
             ;;
         3)
-            ./finish_the_day_with_holiday
+            execute_script 'finish_the_day_with_holiday'
             ;;
         *)
             ;;
@@ -154,18 +161,18 @@ function display_entries ()
 
     case ${CURRENT_TASK_ID} in
         1)
-            ./list_last_week
+            execute_script 'list_last_week'
             ;;
         2)
-            ./list_last_day
+            execute_script 'list_last_day'
             ;;
         3)
-            ./list_current_day
+            execute_script 'list_current_day'
             ;;
         4)
             echo ":: How many days do you want to display from the past?"
             read -p "   " NUMBER_OF_DAYS_TO_LIST
-            ./list_last_days ${NUMBER_OF_DAYS_TO_LIST}
+            execute_script "list_last_days ${NUMBER_OF_DAYS_TO_LIST}"
             ;;
         *)
             GLOBAL_CURRENT_STEP=-1
@@ -175,7 +182,7 @@ function display_entries ()
 
 function edit_current_week ()
 {
-    ./edit_current_week
+    execute_script 'edit_current_week'
     GLOBAL_CURRENT_STEP=-1
 }
 

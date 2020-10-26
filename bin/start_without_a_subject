@@ -13,6 +13,7 @@ $possiblePathsToComposerAutoloadFile = [
 ];
 $pathToAutoloadFileNotFound = true;
 $pathToAutoloadFile         = null;
+
 foreach ($possiblePathsToComposerAutoloadFile as $path) {
     if (file_exists($path)) {
         $pathToAutoloadFile         = $path;
@@ -52,7 +53,7 @@ $environment->execute(
         //endn of argument validation
 
         //begin of business logic
-        $command = __DIR__ . '/start_with - ' . $arguments->convertToString();
+        $command = 'php ' . __DIR__ . '/start_with - ' . $arguments->convertToString();
 
         passthru($command);
         //end of business logic
